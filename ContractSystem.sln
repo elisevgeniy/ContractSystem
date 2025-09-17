@@ -5,9 +5,9 @@ VisualStudioVersion = 17.14.36429.23 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem.Core", "Core\ContractSystem.Core.csproj", "{5AC56427-5E96-4ADC-8AA3-75177C2AE342}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem.Service", "ContractSystem.Service\ContractSystem.Service.csproj", "{B1B535DD-517D-4E89-A4E9-B5F64D61E825}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem.Services", "ContractSystem.Service\ContractSystem.Services.csproj", "{B1B535DD-517D-4E89-A4E9-B5F64D61E825}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem.Repository", "ContractSystem.Repository\ContractSystem.Repository.csproj", "{EF1C8B32-2D35-4C32-BA47-3BCAB6DCAF34}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem.Repositories", "ContractSystem.Repository\ContractSystem.Repositories.csproj", "{EF1C8B32-2D35-4C32-BA47-3BCAB6DCAF34}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem._Debug", "ContractSystem.Debug\ContractSystem._Debug.csproj", "{CF33385F-96D7-4FC6-8DAB-F333D69D3908}"
 EndProject
