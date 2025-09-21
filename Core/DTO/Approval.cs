@@ -9,8 +9,8 @@ namespace ContractSystem.Core.DTO
     public class Approval
     {
         public int Id { get; set; }
-        public Document document { get; set; }
-        public User user { get; set; }
+        public Document Document { get; set; }
+        public User User { get; set; }
         public DateTime? ApprovalDate { get; set; }
         public bool IsApproved { get; set; }
     }
