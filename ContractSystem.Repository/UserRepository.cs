@@ -7,6 +7,7 @@ namespace ContractSystem.Repository
     public class UserRepository
     {
         private const string QueryGetUserByID = "SELECT id, firstname , lastname FROM users WHERE id = @id;";
+        private const string QueryGetFirstUserByFirstname = "SELECT id, firstname , lastname FROM users WHERE firstname = @firstname;";
         private const string QueryGetAllUsers = "SELECT id, firstname , lastname FROM users";
         private const string QueryAddUser = "INSERT INTO USERs(firstname , lastname) VALUES (@firstname,@lastname) RETURNING id;";
         private const string QueryDeleteUserByID = "DELETE FROM users WHERE id=@id;";
@@ -35,6 +36,33 @@ namespace ContractSystem.Repository
                 else
                 {
                     throw new Exception("User not found");
+                }
+            }
+        }
+
+        public static User? GetFirstUserByFirstname(string firstname) 
+        {
+            using (NpgsqlConnection connection = new NpgsqlConnection(Options.ConnectionString))
+            {
+                connection.Open();
+
+                NpgsqlCommand command = new NpgsqlCommand(QueryGetFirstUserByFirstname, connection);
+                command.Parameters.AddWithValue("firstname", firstname);
+
+                var reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    reader.Read();
+                    return new User()
+                    {
+                        Id = reader.GetInt32(0),
+                        Firstname = reader.GetString(1),
+                        Lastname = reader.GetString(2)
+                    };
+                }
+                else
+                {
+                    return null;
                 }
             }
         }

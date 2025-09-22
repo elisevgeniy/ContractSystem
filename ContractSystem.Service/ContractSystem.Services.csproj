@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ContractSystem.Repository\ContractSystem.Repositories.csproj" />
+    <ProjectReference Include="..\Core\ContractSystem.Core.csproj" />
+  </ItemGroup>
+
 </Project>
