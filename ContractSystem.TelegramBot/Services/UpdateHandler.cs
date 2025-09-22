@@ -63,7 +63,7 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
 
         Message sentMessage = await (messageText.Split(' ')[0] switch
         {
-            "/register" => SendRegister(msg),
+            "/login" => SendLogin(msg),
             _ => Usage(msg)
         });
         logger.LogInformation("The message was sent with id: {SentMessageId}", sentMessage.Id);
@@ -73,16 +73,16 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
     {
         const string usage = """
                 <b><u>Меню</u></b>:
-                /register       - Зарегистрироваться
+                /login       - Войти в систему
             """;
         return await bot.SendMessage(msg.Chat, usage, parseMode: ParseMode.Html, replyMarkup: new ReplyKeyboardRemove());
     }
 
-    async Task<Message> SendRegister(Message msg)
+    async Task<Message> SendLogin(Message msg)
     {
         var user = UserService.AddUser(msg.From.Username ?? msg.From.Id.ToString(), msg.From.FirstName);
         
-        return await bot.SendMessage(msg.Chat, $"Вы зарегистрированы как {user.Firstname}", replyMarkup: MenuMain);
+        return await bot.SendMessage(msg.Chat, $"Вы вошли как {user.Firstname}", replyMarkup: MenuMain);
     }
 
 
