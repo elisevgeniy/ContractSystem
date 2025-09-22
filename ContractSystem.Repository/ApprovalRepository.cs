@@ -138,7 +138,7 @@ namespace ContractSystem.Repository
             }
         }
 
-        public static void UpdateApproval(int user_id, int document_id, bool approved)
+        public static bool UpdateApproval(int user_id, int document_id, bool approved)
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(Options.ConnectionString))
             {
@@ -149,7 +149,7 @@ namespace ContractSystem.Repository
                 command.Parameters.AddWithValue("document_id", document_id);
                 command.Parameters.AddWithValue("approved", approved);
 
-                command.ExecuteNonQuery();
+                return command.ExecuteNonQuery() > 0;
             }
         }
     }

@@ -120,8 +120,25 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
                 await bot.SendMessage(callbackQuery.Message!.Chat, $"Добавлен договор № {doc.Index}\nСогласован: {doc.IsApproved}\nСодержимое: {doc.Content}", ParseMode.Html);
                 break;
             case "ApproveDoc":
+                await bot.SendMessage(callbackQuery.Message!.Chat, $"Нажмите, чтобы согласовать:", ParseMode.Html, 
+                    replyMarkup: PrepareDocumentApproveList(user)
+                    );
+                break;
             case "AskDocForApprove":
                 await bot.AnswerCallbackQuery(callbackQuery.Id, $"Received {callbackQuery.Data}, but not implemented yet");
+                break;
+            default: 
+                if (callbackQuery.Data!.StartsWith("ApproveDoc_"))
+                {
+                    string docIdStr = callbackQuery.Data.Split("_").ToList().Last();
+                    if (int.TryParse(docIdStr, out int docId))
+                    {
+                        if (DocumentService.Approve(docId, user))
+                            await bot.SendMessage(callbackQuery.Message!.Chat, "Договор согласован", ParseMode.Html);
+                        else
+                            await bot.SendMessage(callbackQuery.Message!.Chat, "Произошла ошибка", ParseMode.Html);
+                    }
+                }
                 break;
         }
     }
@@ -136,6 +153,22 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
         }
 
         return result;
+    }
+
+    private InlineKeyboardMarkup PrepareDocumentApproveList(User user)
+    {
+        var docs = DocumentService.GetDocumentByUser(user);
+        InlineKeyboardMarkup docList = new InlineKeyboardMarkup();
+        foreach (var doc in docs)
+        {
+            if (!doc.IsApproved) {
+                docList = docList
+                    .AddNewRow()
+                        .AddButton($"№ {doc.Index}", $"ApproveDoc_{doc.Id}");
+            }
+
+        }
+        return docList;
     }
 
     #region Inline Mode

@@ -16,5 +16,9 @@ namespace ContractSystem.Service
             ApprovalRepository.AddApproval(user.Id, doc.Id);
             return doc;
         }
+        public static bool Approve(int documentId, User user)
+        {
+            return ApprovalRepository.UpdateApproval(user.Id, documentId, true);
+        }
     }
 }
