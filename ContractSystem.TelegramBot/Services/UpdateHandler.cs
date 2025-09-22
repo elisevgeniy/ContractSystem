@@ -157,7 +157,7 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
 
     private InlineKeyboardMarkup PrepareDocumentApproveList(User user)
     {
-        var docs = DocumentService.GetDocumentByUser(user);
+        var docs = DocumentService.GetDocumentForApproveByUser(user);
         InlineKeyboardMarkup docList = new InlineKeyboardMarkup();
         foreach (var doc in docs)
         {

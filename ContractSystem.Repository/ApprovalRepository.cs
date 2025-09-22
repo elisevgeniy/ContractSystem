@@ -100,7 +100,8 @@ namespace ContractSystem.Repository
                             {
                                 Id = reader.GetInt32(3),
                                 Index = reader.GetString(4),
-                                Content = reader.GetString(5)
+                                Content = reader.GetString(5),
+                                IsApproved = reader.GetBoolean(7),
                             }
                         });
                     }
