@@ -192,7 +192,8 @@ namespace ContractSystem.Repository
                         {
                             Id = reader.GetInt32(0),
                             Index = reader.GetString(1),
-                            Content = reader.GetString(2)
+                            Content = reader.GetString(2),
+                            IsApproved = reader.GetBoolean(3),
                         });
                     }
                     return Documents;
