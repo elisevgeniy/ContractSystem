@@ -6,9 +6,9 @@ namespace ContractSystem.Repository
 {
     public class ApprovalRepository
     {
-        private const string QueryAddApproval = "INSERT INTO approvals(document_id, document_id) VALUES (@document_id, @document_id);";
-        private const string QueryRemoveApproval = "DELETE * FROM approvals WHERE document_id = @document_id AND  document_id = @document_id;";
-        private const string QueryUpdateApproval = "UPDATE approvals SET approved = @approved , approval_date=CASE WHEN @approved THEN NOW() ELSE NULL END WHERE document_id = @document_id AND  document_id = @document_id;";
+        private const string QueryAddApproval = "INSERT INTO approvals(user_id, document_id) VALUES (@user_id, @document_id);";
+        private const string QueryRemoveApproval = "DELETE * FROM approvals WHERE user_id = @user_id AND  document_id = @document_id;";
+        private const string QueryUpdateApproval = "UPDATE approvals SET approved = @approved , approval_date=CASE WHEN @approved THEN NOW() ELSE NULL END WHERE user_id = @user_id AND  document_id = @document_id;";
         private const string QueryGetApprovalsByUser = """
             SELECT u.id AS user_id, u.firstname, u.lastname, docs.id AS document_id, docs."index", docs.content, a.id as approval_id, a.approved, a.approval_date
                 FROM approvals AS a 
@@ -117,7 +117,7 @@ namespace ContractSystem.Repository
                 connection.Open();
 
                 NpgsqlCommand command = new NpgsqlCommand(QueryAddApproval, connection);
-                command.Parameters.AddWithValue("document_id", user_id);
+                command.Parameters.AddWithValue("user_id", user_id);
                 command.Parameters.AddWithValue("document_id", document_id);
 
                 command.ExecuteNonQuery();
@@ -131,7 +131,7 @@ namespace ContractSystem.Repository
                 connection.Open();
 
                 NpgsqlCommand command = new NpgsqlCommand(QueryRemoveApproval, connection);
-                command.Parameters.AddWithValue("document_id", user_id);
+                command.Parameters.AddWithValue("user_id", user_id);
                 command.Parameters.AddWithValue("document_id", document_id);
 
                 command.ExecuteNonQuery();
@@ -145,7 +145,7 @@ namespace ContractSystem.Repository
                 connection.Open();
 
                 NpgsqlCommand command = new NpgsqlCommand(QueryUpdateApproval, connection);
-                command.Parameters.AddWithValue("document_id", user_id);
+                command.Parameters.AddWithValue("user_id", user_id);
                 command.Parameters.AddWithValue("document_id", document_id);
                 command.Parameters.AddWithValue("approved", approved);
 
