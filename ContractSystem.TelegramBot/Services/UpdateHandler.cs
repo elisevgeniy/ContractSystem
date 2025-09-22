@@ -70,7 +70,7 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
 
         var inlineMarkup = new InlineKeyboardMarkup()
             .AddNewRow()
-                .AddButton("Список доступных договоров", "UserDocList")
+                .AddButton("Список ваших договоров", "UserDocList")
             .AddNewRow()
                 .AddButton("Добавить договор", "AddDoc")
             .AddNewRow()
