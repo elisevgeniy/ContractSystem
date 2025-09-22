@@ -50,11 +50,6 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
         Message sentMessage = await (messageText.Split(' ')[0] switch
         {
             "/register" => SendRegister(msg),
-            "/inline_buttons" => SendInlineKeyboard(msg),
-            "/keyboard" => SendReplyKeyboard(msg),
-            "/remove" => RemoveKeyboard(msg),
-            "/request" => RequestContactAndLocation(msg),
-            "/inline_mode" => StartInlineQuery(msg),
             _ => Usage(msg)
         });
         logger.LogInformation("The message was sent with id: {SentMessageId}", sentMessage.Id);
@@ -63,14 +58,8 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
     async Task<Message> Usage(Message msg)
     {
         const string usage = """
-                <b><u>Bot menu</u></b>:
+                <b><u>Меню</u></b>:
                 /register       - Зарегистрироваться
-                /inline_buttons - send inline buttons
-                /keyboard       - send keyboard buttons
-                /remove         - remove keyboard buttons
-                /request        - request location or contact
-                /inline_mode    - send inline-mode results list
-                /throw          - what happens if handler fails
             """;
         return await bot.SendMessage(msg.Chat, usage, parseMode: ParseMode.Html, replyMarkup: new ReplyKeyboardRemove());
     }
