@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/ContractSystem.Debug/Properties/launchSettings.json
+/ContractSystem.Debug/ContractSystem._Debug.csproj
+/ContractSystem.Debug/ContractSystem._Debug.csproj
+/ContractSystem.Debug/Program.cs
