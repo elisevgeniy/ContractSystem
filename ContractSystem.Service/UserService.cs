@@ -16,6 +16,11 @@ namespace ContractSystem.Service
 
             return user;
         }
+        public static User? GetUser(string firstname)
+        {
+            User? user = UserRepository.GetFirstUserByFirstname(firstname);
+            return user;
+        }
 
         private static void InicializeUser(User user)
         {

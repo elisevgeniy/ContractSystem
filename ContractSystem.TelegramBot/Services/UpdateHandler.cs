@@ -1,4 +1,6 @@
+using ContractSystem.Core.DTO;
 using ContractSystem.Service;
+using System.Text;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
@@ -6,11 +8,25 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InlineQueryResults;
 using Telegram.Bot.Types.ReplyMarkups;
+using User = ContractSystem.Core.DTO.User;
 
 namespace Console.Advanced.Services;
 
 public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger) : IUpdateHandler
 {
+    #region menues
+    private static InlineKeyboardMarkup MenuMain = new InlineKeyboardMarkup()
+            .AddNewRow()
+                .AddButton("Список ваших договоров", "UserDocList")
+            .AddNewRow()
+                .AddButton("Добавить договор", "AddDoc")
+            .AddNewRow()
+                .AddButton("Согласовать договор", "ApproveDoc")
+            .AddNewRow()
+                .AddButton("Запросить договор на согласование", "AskDocForApprove");
+
+    #endregion
+
     public async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, HandleErrorSource source, CancellationToken cancellationToken)
     {
         logger.LogInformation("HandleError: {Exception}", exception);
@@ -65,17 +81,8 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
     async Task<Message> SendRegister(Message msg)
     {
         var user = UserService.AddUser(msg.From.Username ?? msg.From.Id.ToString(), msg.From.FirstName);
-
-        var inlineMarkup = new InlineKeyboardMarkup()
-            .AddNewRow()
-                .AddButton("Список ваших договоров", "UserDocList")
-            .AddNewRow()
-                .AddButton("Добавить договор", "AddDoc")
-            .AddNewRow()
-                .AddButton("Согласовать договор", "ApproveDoc")
-            .AddNewRow()
-                .AddButton("Запросить договор на согласование", "AslDocForApprove");
-        return await bot.SendMessage(msg.Chat, $"Вы зарегистрированы как {user.Firstname}", replyMarkup: inlineMarkup);
+        
+        return await bot.SendMessage(msg.Chat, $"Вы зарегистрированы как {user.Firstname}", replyMarkup: MenuMain);
     }
 
 
@@ -88,8 +95,44 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
     private async Task OnCallbackQuery(CallbackQuery callbackQuery)
     {
         logger.LogInformation("Received inline keyboard callback from: {CallbackQueryId}", callbackQuery.Id);
-        await bot.AnswerCallbackQuery(callbackQuery.Id, $"Received {callbackQuery.Data}");
-        await bot.SendMessage(callbackQuery.Message!.Chat, $"Received {callbackQuery.Data}");
+
+        var user = UserService.GetUser(callbackQuery.From.Username ?? callbackQuery.From.Id.ToString());
+        if (user == null)
+        {
+            await Usage(callbackQuery.Message!);
+            return;
+        }
+
+        switch (callbackQuery.Data)
+        {
+            case "UserDocList":
+                var docMessages = PrepareDocumentList(user);
+                await bot.SendMessage(callbackQuery.Message!.Chat,
+                    (docMessages.Count == 0) ? "Договоров нет" : "Список Ваших договоров:"
+                    , ParseMode.Html);
+                foreach (String message in docMessages)
+                {
+                    await bot.SendMessage(callbackQuery.Message!.Chat, message, ParseMode.Html);
+                }
+                break;
+            case "AddDoc":
+            case "ApproveDoc":
+            case "AskDocForApprove":
+                await bot.AnswerCallbackQuery(callbackQuery.Id, $"Received {callbackQuery.Data}, but not implemented yet");
+                break;
+        }
+    }
+
+    private List<String> PrepareDocumentList(User user)
+    {
+        var docs = DocumentService.GetDocumentByUser(user);
+        var result = new List<String>();
+        foreach (var doc in docs)
+        {
+            result.Add($"Договор № {doc.Index}\nСогласован: {doc.IsApproved}\nСодержимое: {doc.Content}");
+        }
+
+        return result;
     }
 
     #region Inline Mode
