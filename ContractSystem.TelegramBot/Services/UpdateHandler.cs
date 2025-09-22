@@ -116,6 +116,9 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
                 }
                 break;
             case "AddDoc":
+                var doc = DocumentService.AddDocumentByUser($"Doc-{user.Firstname}-{DateTime.Now.Ticks.ToString()}", "Some content", user);
+                await bot.SendMessage(callbackQuery.Message!.Chat, $"Добавлен договор № {doc.Index}\nСогласован: {doc.IsApproved}\nСодержимое: {doc.Content}", ParseMode.Html);
+                break;
             case "ApproveDoc":
             case "AskDocForApprove":
                 await bot.AnswerCallbackQuery(callbackQuery.Id, $"Received {callbackQuery.Data}, but not implemented yet");
