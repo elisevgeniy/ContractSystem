@@ -365,3 +365,4 @@ FodyWeavers.xsd
 /ContractSystem.Debug/ContractSystem._Debug.csproj
 /ContractSystem.Debug/ContractSystem._Debug.csproj
 /ContractSystem.Debug/Program.cs
+/ContractSystem.TelegramBot/appsettings.json
