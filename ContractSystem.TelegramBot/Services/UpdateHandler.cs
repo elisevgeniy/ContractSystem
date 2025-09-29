@@ -64,6 +64,7 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
         Message sentMessage = await (messageText.Split(' ')[0] switch
         {
             "/login" => SendLogin(msg),
+            "/add" => AddDocument(msg),
             _ => Usage(msg)
         });
         logger.LogInformation("The message was sent with id: {SentMessageId}", sentMessage.Id);
@@ -83,6 +84,26 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
         var user = UserService.AddUser(msg.From.Username ?? msg.From.Id.ToString(), msg.From.FirstName);
         
         return await bot.SendMessage(msg.Chat, $"Вы вошли как {user.Firstname}", replyMarkup: MenuMain);
+    }
+
+    async Task<Message> AddDocument(Message msg)
+    {
+        String[] MessageData = msg.Text!.Split("\n");
+
+        if (MessageData.Length == 1) return await bot.SendMessage(msg.Chat, "Вы ввели мало информации, попробйте снова");
+        String DocNumber = MessageData[0].Substring(5);
+        String DocContent = MessageData.Length > 1 ? MessageData[1] : "Пустой документ";
+
+        var user = UserService.GetUser(msg.From!.Username ?? msg.From.Id.ToString());
+
+        try
+        {
+            var doc = DocumentService.AddDocumentByUser(DocNumber, DocContent, user);
+            return await bot.SendMessage(msg.Chat, $"Добавлен договор № {doc.Index}\nСогласован: {doc.IsApproved}\nСодержимое: {doc.Content}", ParseMode.Html);
+        } catch (Exception e)
+        {
+            return await bot.SendMessage(msg.Chat, "Выероятно, договор с таким номером уже добавлен");
+        }
     }
 
 
@@ -116,8 +137,11 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
                 }
                 break;
             case "AddDoc":
-                var doc = DocumentService.AddDocumentByUser($"Doc-{user.Firstname}-{DateTime.Now.Ticks.ToString()}", "Some content", user);
-                await bot.SendMessage(callbackQuery.Message!.Chat, $"Добавлен договор № {doc.Index}\nСогласован: {doc.IsApproved}\nСодержимое: {doc.Content}", ParseMode.Html);
+                await bot.SendMessage(callbackQuery.Message!.Chat, """
+                    Для добавления отправьте сообщение  в 2 строки:
+                    /add Номер договора (строкой)
+                    Содержание договора
+                    """);
                 break;
             case "ApproveDoc":
                 await bot.SendMessage(callbackQuery.Message!.Chat, $"Нажмите, чтобы согласовать:", ParseMode.Html, 
