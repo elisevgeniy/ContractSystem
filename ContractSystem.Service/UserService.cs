@@ -1,32 +1,43 @@
-﻿using ContractSystem.Core.DTO;
+﻿using ContractSystem.Core.Models;
+using ContractSystem.Core.Models.DTO;
+using ContractSystem.Core.Models.In;
+using ContractSystem.Core.Models.Out;
 using ContractSystem.Repository;
 
 namespace ContractSystem.Service
 {
     public class UserService
     {
-        public static User AddUser(string firstname, string lastname)
+        public static UserOut AddUser(string firstname, string lastname)
         {
-            User? user = UserRepository.GetFirstUserByFirstname(firstname);
-            if (user == null)
+            UserOut user = null;
+            UserDTO userDTO = UserRepository.GetFirstUserByFirstname(firstname);
+            if (userDTO == null)
             {
-                user = UserRepository.AddUser(firstname, lastname);
+                user = MapperManager.Map(UserRepository.AddUser(firstname, lastname));
                 InicializeUser(user);
+            } else
+            {
+                user = MapperManager.Map(userDTO);
             }
 
-            return user;
+                return user;
         }
-        public static User? GetUser(string firstname)
+        public static UserOut? GetUser(string firstname)
         {
-            User? user = UserRepository.GetFirstUserByFirstname(firstname);
-            return user;
+            UserDTO userDTO = UserRepository.GetFirstUserByFirstname(firstname);
+
+            if (userDTO == null) return null;
+            return MapperManager.Map(userDTO);
         }
 
-        private static void InicializeUser(User user)
+        private static void InicializeUser(UserOut user)
         {
             for (int i = 0; i < 4; i++)
             {
-                var doc = DocumentRepository.AddDocument($"Doc-{user.Firstname}-{i + 1}", "Some content");
+                var doc = DocumentRepository.AddDocument(
+                    MapperManager.Map(new DocumentIn() { Index = $"Doc-{user.Firstname}-{i + 1}", Content = "Some content" }
+                    ));
                 DocumentRepository.MakeOwnedDocumentToUser(user.Id, doc.Id);
                 if (i % 2 == 0)
                 {

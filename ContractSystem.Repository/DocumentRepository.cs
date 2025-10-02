@@ -1,4 +1,5 @@
-﻿using ContractSystem.Core.DTO;
+﻿using ContractSystem.Core.Models.DTO;
+using ContractSystem.Core.Models.In;
 using Core;
 using Npgsql;
 
@@ -38,11 +39,11 @@ namespace ContractSystem.Repository
             """;
         private const string QueryMakeOwnedDocumentToUser = "INSERT INTO document_owners(user_id, document_id) VALUES (@user_id, @document_id);";
         private const string QueryMakeUnownedDocumentToUser = "DELETE * FROM document_owners WHERE user_id = @user_id AND  document_id = @document_id;";
-         private const string QueryAddDocument = "INSERT INTO Documents(index , content) VALUES (@index,@content) RETURNING id;";
+        private const string QueryAddDocument = "INSERT INTO Documents(index , content) VALUES (@index,@content) RETURNING id;";
         private const string QueryDeleteDocumentByID = "DELETE FROM Documents WHERE id=@id;";
         private const string QueryUpdateDocument = "UPDATE Documents SET index=@index,content=@content WHERE id=@id RETURNING id;";
 
-        public static Document GetDocumentById(int id)
+        public static DocumentDTO GetDocumentById(int id)
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(Options.ConnectionString))
             {
@@ -55,7 +56,7 @@ namespace ContractSystem.Repository
                 if (reader.HasRows)
                 {
                     reader.Read();
-                    return new Document()
+                    return new DocumentDTO()
                     {
                         Id = reader.GetInt32(0),
                         Index = reader.GetString(1),
@@ -64,27 +65,27 @@ namespace ContractSystem.Repository
                 }
                 else
                 {
-                    throw new Exception("Document not found");
+                    throw new Exception("DocumentIn not found");
                 }
             }
         }
 
-        public static Document AddDocument(string index, string content)
+        public static DocumentDTO AddDocument(DocumentDTO documentDTO)
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(Options.ConnectionString))
             {
                 connection.Open();
 
                 NpgsqlCommand command = new NpgsqlCommand(QueryAddDocument, connection);
-                command.Parameters.AddWithValue("index", index);
-                command.Parameters.AddWithValue("content", content);
+                command.Parameters.AddWithValue("index", documentDTO.Index);
+                command.Parameters.AddWithValue("content", documentDTO.Content);
 
                 int id = (int)command.ExecuteScalar()!;
-                return new Document()
+                return new DocumentDTO()
                 {
                     Id = id,
-                    Index = index,
-                    Content = content
+                    Index = documentDTO.Index,
+                    Content = documentDTO.Content
                 };
             }
         }
@@ -117,7 +118,7 @@ namespace ContractSystem.Repository
             }
         }
 
-        public static bool UpdateDocument(Document Document)
+        public static bool UpdateDocument(DocumentDTO Document)
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(Options.ConnectionString))
             {
@@ -135,12 +136,12 @@ namespace ContractSystem.Repository
                 }
                 else
                 {
-                    throw new Exception("Document not found");
+                    throw new Exception("DocumentIn not found");
                 }
             }
         }
 
-        public static List<Document> GetAllDocuments()
+        public static List<DocumentDTO> GetAllDocuments()
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(Options.ConnectionString))
             {
@@ -148,14 +149,14 @@ namespace ContractSystem.Repository
 
                 NpgsqlCommand command = new NpgsqlCommand(QueryGetAllDocuments, connection);
 
-                List<Document> Documents = new List<Document>();
+                List<DocumentDTO> Documents = new List<DocumentDTO>();
 
                 var reader = command.ExecuteReader();
                 if (reader.HasRows)
                 {
                     while (reader.Read())
                     {
-                        Documents.Add(new Document()
+                        Documents.Add(new DocumentDTO()
                         {
                             Id = reader.GetInt32(0),
                             Index = reader.GetString(1),
@@ -167,12 +168,12 @@ namespace ContractSystem.Repository
                 }
                 else
                 {
-                    throw new Exception("Document not found");
+                    throw new Exception("DocumentIn not found");
                 }
             }
         }
 
-        public static List<Document> GetAllDocumentsByUser(int user_id)
+        public static List<DocumentDTO> GetAllDocumentsByUser(int user_id)
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(Options.ConnectionString))
             {
@@ -181,14 +182,14 @@ namespace ContractSystem.Repository
                 NpgsqlCommand command = new NpgsqlCommand(QueryGetAllDocumentsByUser, connection);
                 command.Parameters.AddWithValue("user_id", user_id);
 
-                List<Document> Documents = new List<Document>();
+                List<DocumentDTO> Documents = new List<DocumentDTO>();
 
                 var reader = command.ExecuteReader();
                 if (reader.HasRows)
                 {
                     while (reader.Read())
                     {
-                        Documents.Add(new Document()
+                        Documents.Add(new DocumentDTO()
                         {
                             Id = reader.GetInt32(0),
                             Index = reader.GetString(1),
@@ -200,7 +201,7 @@ namespace ContractSystem.Repository
                 }
                 else
                 {
-                    throw new Exception("Document not found");
+                    throw new Exception("DocumentIn not found");
                 }
             }
         }

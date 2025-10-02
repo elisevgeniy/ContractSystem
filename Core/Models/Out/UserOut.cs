@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ContractSystem.Core.DTO
+namespace ContractSystem.Core.Models.Out
 {
-    public class User
+    public class UserOut
     {
         public int Id { get; set; }
         public string Firstname { get; set; }

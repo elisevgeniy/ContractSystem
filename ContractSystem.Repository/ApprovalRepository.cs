@@ -1,4 +1,4 @@
-﻿using ContractSystem.Core.DTO;
+﻿using ContractSystem.Core.Models.DTO;
 using Core;
 using Npgsql;
 
@@ -28,7 +28,7 @@ namespace ContractSystem.Repository
                 WHERE a.document_id = @document_id;
             """;
 
-        public static List<Approval> GetApprovalsByDocument(int document_id)
+        public static List<ApprovalDTO> GetApprovalsByDocument(int document_id)
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(Options.ConnectionString))
             {
@@ -37,14 +37,14 @@ namespace ContractSystem.Repository
                 NpgsqlCommand command = new NpgsqlCommand(QueryGetApprovalsByDocument, connection);
                 command.Parameters.AddWithValue("document_id", document_id);
 
-                List<Approval> Approvals = new List<Approval>();
+                List<ApprovalDTO> Approvals = new List<ApprovalDTO>();
 
                 var reader = command.ExecuteReader();
                 if (reader.HasRows)
                 {
                     while (reader.Read())
                     {
-                        Approvals.Add(new Approval()
+                        Approvals.Add(new ApprovalDTO()
                         {
                             Id = reader.GetInt32(6),
                             IsApproved = reader.GetBoolean(7),
@@ -69,7 +69,7 @@ namespace ContractSystem.Repository
             }
         }
 
-        public static List<Approval> GetApprovalsByUser(int user_id)
+        public static List<ApprovalDTO> GetApprovalsByUser(int user_id)
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(Options.ConnectionString))
             {
@@ -78,14 +78,14 @@ namespace ContractSystem.Repository
                 NpgsqlCommand command = new NpgsqlCommand(QueryGetApprovalsByUser, connection);
                 command.Parameters.AddWithValue("document_id", user_id);
 
-                List<Approval> Approvals = new List<Approval>();
+                List<ApprovalDTO> Approvals = new List<ApprovalDTO>();
 
                 var reader = command.ExecuteReader();
                 if (reader.HasRows)
                 {
                     while (reader.Read())
                     {
-                        Approvals.Add(new Approval()
+                        Approvals.Add(new ApprovalDTO()
                         {
                             Id = reader.GetInt32(6),
                             IsApproved = reader.GetBoolean(7),

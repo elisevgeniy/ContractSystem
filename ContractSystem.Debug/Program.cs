@@ -10,7 +10,7 @@ namespace ContractSystem.Debug
         private static void Main(string[] args)
         {
             //    Console.WriteLine(UserRepository.GetAllUsers().Count);
-            //    User u = UserRepository.AddUser("Иванов", "Иван");
+            //    UserIn u = UserRepository.AddUser("Иванов", "Иван");
             //    print(u);
             //    string temp = u.Firstname;
             //    u.Firstname = u.Lastname;
@@ -21,7 +21,7 @@ namespace ContractSystem.Debug
             //    UserRepository.DeleteUserById(u.Id);
             //    Console.WriteLine(UserRepository.GetAllUsers().Count);
 
-            //Document document = DocumentRepository.AddDocument("Doc-2025-2", "Some data");
+            //DocumentIn document = DocumentRepository.AddDocument("Doc-2025-2", "Some data");
             //print(document);
 
             print(ApprovalRepository.GetApprovalsByUser(1));

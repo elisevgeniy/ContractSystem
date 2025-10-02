@@ -1,4 +1,4 @@
-﻿using ContractSystem.Core.DTO;
+﻿using ContractSystem.Core.Models.DTO;
 using Core;
 using Npgsql;
 
@@ -13,7 +13,7 @@ namespace ContractSystem.Repository
         private const string QueryDeleteUserByID = "DELETE FROM users WHERE id=@id;";
         private const string QueryUpdateUser = "UPDATE users SET firstname=@firstname,lastname=@lastname WHERE id=@id RETURNING id;";
 
-        public static User GetUserById(int id)
+        public static UserDTO GetUserById(int id)
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(Options.ConnectionString))
             {
@@ -26,7 +26,7 @@ namespace ContractSystem.Repository
                 if (reader.HasRows)
                 {
                     reader.Read();
-                    return new User()
+                    return new UserDTO()
                     {
                         Id = reader.GetInt32(0),
                         Firstname = reader.GetString(1),
@@ -35,12 +35,12 @@ namespace ContractSystem.Repository
                 }
                 else
                 {
-                    throw new Exception("User not found");
+                    throw new Exception("UserIn not found");
                 }
             }
         }
 
-        public static User? GetFirstUserByFirstname(string firstname) 
+        public static UserDTO? GetFirstUserByFirstname(string firstname) 
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(Options.ConnectionString))
             {
@@ -53,7 +53,7 @@ namespace ContractSystem.Repository
                 if (reader.HasRows)
                 {
                     reader.Read();
-                    return new User()
+                    return new UserDTO()
                     {
                         Id = reader.GetInt32(0),
                         Firstname = reader.GetString(1),
@@ -67,7 +67,7 @@ namespace ContractSystem.Repository
             }
         }
 
-        public static User AddUser(string firstname, string lastname)
+        public static UserDTO AddUser(string firstname, string lastname)
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(Options.ConnectionString))
             {
@@ -78,7 +78,7 @@ namespace ContractSystem.Repository
                 command.Parameters.AddWithValue("lastname", lastname);
 
                 int id = (int)command.ExecuteScalar()!;
-                return new User()
+                return new UserDTO()
                 {
                     Id = id,
                     Firstname = firstname,
@@ -87,7 +87,7 @@ namespace ContractSystem.Repository
             }
         }
 
-        public static bool UpdateUser(User user)
+        public static bool UpdateUser(UserDTO user)
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(Options.ConnectionString))
             {
@@ -105,12 +105,12 @@ namespace ContractSystem.Repository
                 }
                 else
                 {
-                    throw new Exception("User not found");
+                    throw new Exception("UserIn not found");
                 }
             }
         }
 
-        public static List<User> GetAllUsers()
+        public static List<UserDTO> GetAllUsers()
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(Options.ConnectionString))
             {
@@ -118,14 +118,14 @@ namespace ContractSystem.Repository
 
                 NpgsqlCommand command = new NpgsqlCommand(QueryGetAllUsers, connection);
 
-                List<User> users = new List<User>();
+                List<UserDTO> users = new List<UserDTO>();
 
                 var reader = command.ExecuteReader();
                 if (reader.HasRows)
                 {
                     while (reader.Read())
                     {
-                        users.Add(new User()
+                        users.Add(new UserDTO()
                         {
                             Id = reader.GetInt32(0),
                             Firstname = reader.GetString(1),
@@ -136,7 +136,7 @@ namespace ContractSystem.Repository
                 }
                 else
                 {
-                    throw new Exception("User not found");
+                    throw new Exception("UserIn not found");
                 }
             }
         }

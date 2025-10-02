@@ -1,4 +1,4 @@
-using ContractSystem.Core.DTO;
+using ContractSystem.Core.Models.Out;
 using ContractSystem.Service;
 using System.Text;
 using Telegram.Bot;
@@ -8,7 +8,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InlineQueryResults;
 using Telegram.Bot.Types.ReplyMarkups;
-using User = ContractSystem.Core.DTO.User;
+using UserDTO = ContractSystem.Core.Models.DTO.UserDTO;
 
 namespace Console.Advanced.Services;
 
@@ -81,7 +81,7 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
 
     async Task<Message> SendLogin(Message msg)
     {
-        var user = UserService.AddUser(msg.From.Username ?? msg.From.Id.ToString(), msg.From.FirstName);
+        UserOut user = UserService.AddUser(msg.From.Username ?? msg.From.Id.ToString(), msg.From.FirstName);
         
         return await bot.SendMessage(msg.Chat, $"Вы вошли как {user.Firstname}", replyMarkup: MenuMain);
     }
@@ -98,7 +98,7 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
 
         try
         {
-            var doc = DocumentService.AddDocumentByUser(DocNumber, DocContent, user);
+            var doc = DocumentService.AddDocumentByUser(DocNumber, DocContent, user.Id);
             return await bot.SendMessage(msg.Chat, $"Добавлен договор № {doc.Index}\nСогласован: {doc.IsApproved}\nСодержимое: {doc.Content}", ParseMode.Html);
         } catch (Exception e)
         {
@@ -157,7 +157,7 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
                     string docIdStr = callbackQuery.Data.Split("_").ToList().Last();
                     if (int.TryParse(docIdStr, out int docId))
                     {
-                        if (DocumentService.Approve(docId, user))
+                        if (DocumentService.Approve(docId, user.Id))
                             await bot.SendMessage(callbackQuery.Message!.Chat, "Договор согласован", ParseMode.Html);
                         else
                             await bot.SendMessage(callbackQuery.Message!.Chat, "Произошла ошибка", ParseMode.Html);
@@ -167,9 +167,9 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
         }
     }
 
-    private List<String> PrepareDocumentList(User user)
+    private List<String> PrepareDocumentList(UserOut user)
     {
-        var docs = DocumentService.GetDocumentByUser(user);
+        var docs = DocumentService.GetAllDocumentsByUser(user.Id);
         var result = new List<String>();
         foreach (var doc in docs)
         {
@@ -179,9 +179,9 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
         return result;
     }
 
-    private InlineKeyboardMarkup PrepareDocumentApproveList(User user)
+    private InlineKeyboardMarkup PrepareDocumentApproveList(UserOut user)
     {
-        var docs = DocumentService.GetDocumentForApproveByUser(user);
+        var docs = DocumentService.GetDocumentForApproveByUser(user.Id);
         InlineKeyboardMarkup docList = new InlineKeyboardMarkup();
         foreach (var doc in docs)
         {

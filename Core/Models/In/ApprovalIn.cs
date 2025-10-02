@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ContractSystem.Core.DTO
+namespace ContractSystem.Core.Models.In
 {
-    public class Document
+    public class ApprovalIn
     {
         public int Id { get; set; }
-        public string Index { get; set; }
-        public string Content { get; set; }
+        public DocumentIn Document { get; set; }
+        public UserIn User { get; set; }
+        public DateTime? ApprovalDate { get; set; }
         public bool IsApproved { get; set; }
     }
 }

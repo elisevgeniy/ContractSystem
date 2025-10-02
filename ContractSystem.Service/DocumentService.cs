@@ -1,35 +1,40 @@
-﻿using ContractSystem.Core.DTO;
+﻿using ContractSystem.Core.Models;
+using ContractSystem.Core.Models.DTO;
+using ContractSystem.Core.Models.In;
+using ContractSystem.Core.Models.Out;
 using ContractSystem.Repository;
 
 namespace ContractSystem.Service
 {
     public class DocumentService
     {
-        public static List<Document> GetDocumentByUser(User user)
+        public static List<DocumentOut> GetAllDocumentsByUser(int user_id)
         {
-            return DocumentRepository.GetAllDocumentsByUser(user.Id);
+            return MapperManager.Map(DocumentRepository.GetAllDocumentsByUser(user_id));
         }
-        public static List<Document> GetDocumentForApproveByUser(User user)
+        public static List<DocumentOut> GetDocumentForApproveByUser(int user_id)
         {
-            var result = new List<Document>();
-            var approvals = ApprovalRepository.GetApprovalsByUser(user.Id);
-            foreach (var approval in approvals)
-            {
-                if (!approval.Document.IsApproved) 
-                    result.Add(approval.Document);
-            }
+            var result = new List<DocumentOut>();
+            List<ApprovalOut> approvals = MapperManager.Map(ApprovalRepository.GetApprovalsByUser(user_id));
+            result = approvals.Where(approval => !approval.Document.IsApproved).Select(approval => approval.Document).ToList();
             return result;
         }
-        public static Document AddDocumentByUser(string index, string content, User user)
+        public static DocumentOut AddDocumentByUser(string index, string content, int user_id)
         {
-            var doc = DocumentRepository.AddDocument(index, content);
-            DocumentRepository.MakeOwnedDocumentToUser(user.Id, doc.Id);
-            ApprovalRepository.AddApproval(user.Id, doc.Id);
+            var doc = MapperManager.Map(DocumentRepository.AddDocument(
+                MapperManager.Map(new DocumentIn()
+                {
+                    Content = content,
+                    Index = index
+                }
+                )));
+            DocumentRepository.MakeOwnedDocumentToUser(user_id, doc.Id);
+            ApprovalRepository.AddApproval(user_id, doc.Id);
             return doc;
         }
-        public static bool Approve(int documentId, User user)
+        public static bool Approve(int documentId, int user_id)
         {
-            return ApprovalRepository.UpdateApproval(user.Id, documentId, true);
+            return ApprovalRepository.UpdateApproval(user_id, documentId, true);
         }
     }
 }
