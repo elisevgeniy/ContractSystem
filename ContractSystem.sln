@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem.Services", "
 		{EF1C8B32-2D35-4C32-BA47-3BCAB6DCAF34} = {EF1C8B32-2D35-4C32-BA47-3BCAB6DCAF34}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem.Repositories", "ContractSystem.Repository\ContractSystem.Repositories.csproj", "{EF1C8B32-2D35-4C32-BA47-3BCAB6DCAF34}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem.RepositoriesOld", "ContractSystem.Repository\ContractSystem.RepositoriesOld.csproj", "{EF1C8B32-2D35-4C32-BA47-3BCAB6DCAF34}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5AC56427-5E96-4ADC-8AA3-75177C2AE342} = {5AC56427-5E96-4ADC-8AA3-75177C2AE342}
 	EndProjectSection

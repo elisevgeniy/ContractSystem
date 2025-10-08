@@ -3,7 +3,7 @@ using ContractSystem.Core.Models.In;
 using Core;
 using Npgsql;
 
-namespace ContractSystem.Repository
+namespace ContractSystem.RepositoryOld
 {
     public class DocumentRepository
     {

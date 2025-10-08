@@ -2,7 +2,7 @@
 using ContractSystem.Core.Models.DTO;
 using ContractSystem.Core.Models.In;
 using ContractSystem.Core.Models.Out;
-using ContractSystem.Repository;
+using ContractSystem.RepositoryOld;
 
 namespace ContractSystem.Service
 {
