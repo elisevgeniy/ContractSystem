@@ -1,5 +1,5 @@
-﻿using ContractSystem.Core.Models.DTO;
-using Core;
+﻿using ContractSystem.Core.DTO;
+using ContractSystem.Core;
 using Npgsql;
 
 namespace ContractSystem.RepositoryOld

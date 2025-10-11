@@ -8,7 +8,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InlineQueryResults;
 using Telegram.Bot.Types.ReplyMarkups;
-using UserDTO = ContractSystem.Core.Models.DTO.UserDTO;
+using UserDTO = ContractSystem.Core.DTO.UserDTO;
 
 namespace Console.Advanced.Services;
 

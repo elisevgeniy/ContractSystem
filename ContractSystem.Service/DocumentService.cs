@@ -1,5 +1,5 @@
 ﻿using ContractSystem.Core.Models;
-using ContractSystem.Core.Models.DTO;
+using ContractSystem.Core.DTO;
 using ContractSystem.Core.Models.In;
 using ContractSystem.Core.Models.Out;
 using ContractSystem.RepositoryOld;

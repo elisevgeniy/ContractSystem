@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ContractSystem.Core.Models.DTO
+namespace ContractSystem.Core.DTO
 {
     public class UserDTO
     {

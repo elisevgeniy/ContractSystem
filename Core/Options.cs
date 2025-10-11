@@ -1,4 +1,4 @@
-﻿namespace Core
+﻿namespace ContractSystem.Core
 {
     public static class Options
     {

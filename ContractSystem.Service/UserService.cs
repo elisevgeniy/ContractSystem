@@ -1,13 +1,29 @@
-﻿using ContractSystem.Core.Models;
-using ContractSystem.Core.Models.DTO;
+﻿using ContractSystem.Core.DTO;
+using ContractSystem.Core.IRepositories;
+using ContractSystem.Core.Models;
 using ContractSystem.Core.Models.In;
 using ContractSystem.Core.Models.Out;
 using ContractSystem.RepositoryOld;
+using Mapster;
 
 namespace ContractSystem.Service
 {
     public class UserService
     {
+        private IUserRepository _userRepository;
+
+        public UserService(IUserRepository userRepository)
+        {
+            _userRepository = userRepository;
+        }
+
+        public List<UserOut> getAll()
+        {
+            var userDTOs = _userRepository.GetAll();
+            var result = userDTOs.Adapt<List<UserOut>>();
+            return result;
+        }
+
         public static UserOut AddUser(string firstname, string lastname)
         {
             UserOut user = null;
