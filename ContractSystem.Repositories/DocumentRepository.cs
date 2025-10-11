@@ -31,18 +31,21 @@ namespace ContractSystem.Repositories
         public DocumentDTO Add(DocumentDTO documentDTO)
         {
             _dataContext.Documents.Add(documentDTO);
+            _dataContext.SaveChanges();
             return documentDTO;
         }
 
         public DocumentDTO Update(DocumentDTO documentDTO)
         {
             _dataContext.Documents.Update(documentDTO);
+            _dataContext.SaveChanges();
             return documentDTO;
         }
 
         public void Delete(DocumentDTO documentDTO)
         {
             _dataContext.Documents.Remove(documentDTO);
+            _dataContext.SaveChanges();
         }
     }
 }

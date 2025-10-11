@@ -20,12 +20,14 @@ namespace ContractSystem.Repositories
         public ApprovalDTO Add(ApprovalDTO approvalDTO)
         {
             _dataContext.Approvals.Add(approvalDTO);
+            _dataContext.SaveChanges();
             return approvalDTO;
         }
 
         public void Delete(ApprovalDTO approvalDTO)
         {
             _dataContext.Approvals.Remove(approvalDTO);
+            _dataContext.SaveChanges();
         }
 
         public List<ApprovalDTO> GetAll()
@@ -41,6 +43,7 @@ namespace ContractSystem.Repositories
         public ApprovalDTO Update(ApprovalDTO approvalDTO)
         {
             _dataContext.Update(approvalDTO);
+            _dataContext.SaveChanges();
             return approvalDTO;
         }
     }
