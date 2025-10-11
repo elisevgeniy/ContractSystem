@@ -9,6 +9,14 @@ namespace ContractSystem.Core.IRepositories
 {
     public interface IDocumentRepository
     {
-        List<UserDTO> GetAll();
+        public List<DocumentDTO> GetAll();
+
+        public DocumentDTO? GetById(int id);
+
+        public DocumentDTO Add(DocumentDTO documentDTO);
+
+        public DocumentDTO Update(DocumentDTO documentDTO);
+
+        public void Delete(DocumentDTO documentDTO);
     }
 }

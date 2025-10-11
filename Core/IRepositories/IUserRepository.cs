@@ -9,6 +9,16 @@ namespace ContractSystem.Core.IRepositories
 {
     public interface IUserRepository
     {
-        List<UserDTO> GetAll();
+        public List<UserDTO> GetAll();
+
+        public UserDTO? GetById(int id);
+
+        public UserDTO? GetFirstByFirstname(string firstname);
+
+        public UserDTO Add(UserDTO userDTO);
+
+        public UserDTO Update(UserDTO userDTO);
+
+        public void Delete(UserDTO userDTO);
     }
 }

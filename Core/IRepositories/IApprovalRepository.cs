@@ -9,6 +9,14 @@ namespace ContractSystem.Core.IRepositories
 {
     public interface IApprovalRepository
     {
-        List<UserDTO> GetAll();
+        public List<ApprovalDTO> GetAll();
+
+        public ApprovalDTO? GetById(int id);
+
+        public ApprovalDTO Add(ApprovalDTO approvalDTO);
+
+        public ApprovalDTO Update(ApprovalDTO approvalDTO);
+
+        public void Delete(ApprovalDTO approvalDTO);
     }
 }

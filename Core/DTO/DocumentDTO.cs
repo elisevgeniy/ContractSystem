@@ -12,5 +12,9 @@ namespace ContractSystem.Core.DTO
         public string Index { get; set; }
         public string Content { get; set; }
         public bool IsApproved { get; set; }
+
+        public List<ApprovalDTO> Approvals { get; set; }
+
+        public UserDTO Owner { get; set; }
     }
 }

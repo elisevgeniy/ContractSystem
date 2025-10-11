@@ -11,5 +11,9 @@ namespace ContractSystem.Core.DTO
         public int Id { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
+
+        public List<DocumentDTO> Documents { get; set; }
+
+        public List<ApprovalDTO> Approvals { get; set; }
     }
 }
