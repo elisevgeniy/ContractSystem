@@ -1,19 +1,16 @@
-﻿using ContractSystem.Core.DTO;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ContractSystem.Core.Models.Out
+namespace ContractSystem.Core.Models.Search
 {
-    public class DocumentOut
+    public class DocumentSearch
     {
         public int Id { get; set; }
         public string Index { get; set; }
         public string Content { get; set; }
         public bool IsApproved { get; set; }
-        //public List<ApprovalOut> Approvals { get; set; }
-        public UserOut Owner { get; set; }
     }
 }

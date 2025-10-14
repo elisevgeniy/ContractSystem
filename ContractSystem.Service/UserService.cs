@@ -3,7 +3,7 @@ using ContractSystem.Core.IRepositories;
 using ContractSystem.Core.Models;
 using ContractSystem.Core.Models.In;
 using ContractSystem.Core.Models.Out;
-using ContractSystem.RepositoryOld;
+using ContractSystem.Repositories;
 using Mapster;
 
 namespace ContractSystem.Service
@@ -24,40 +24,53 @@ namespace ContractSystem.Service
             return result;
         }
 
-        public static UserOut AddUser(string firstname, string lastname)
+        public UserOut AddUser(string firstname, string lastname)
         {
-            UserOut user = null;
-            UserDTO userDTO = UserRepository.GetFirstUserByFirstname(firstname);
+            UserOut? userOut = null;
+            UserDTO? userDTO = _userRepository.GetFirstByFirstname(firstname);
             if (userDTO == null)
             {
-                user = MapperManager.Map(UserRepository.AddUser(firstname, lastname));
-                InicializeUser(user);
-            } else
-            {
-                user = MapperManager.Map(userDTO);
+                userDTO = new UserDTO()
+                {
+                    Firstname = firstname,
+                    Lastname = lastname
+                };
+                InicializeUser(userDTO);
+                userDTO = _userRepository.Add(userDTO);
             }
 
-                return user;
+            userOut = userDTO.Adapt<UserOut>();
+
+            return userOut;
         }
-        public static UserOut? GetUser(string firstname)
+        public UserOut? GetUser(string firstname)
         {
-            UserDTO userDTO = UserRepository.GetFirstUserByFirstname(firstname);
+            UserDTO? userDTO = _userRepository.GetFirstByFirstname(firstname);
 
             if (userDTO == null) return null;
-            return MapperManager.Map(userDTO);
+            return userDTO.Adapt<UserOut>();
         }
 
-        private static void InicializeUser(UserOut user)
+        private static void InicializeUser(UserDTO userDTO)
         {
             for (int i = 0; i < 4; i++)
             {
-                var doc = DocumentRepository.AddDocument(
-                    MapperManager.Map(new DocumentIn() { Index = $"Doc-{user.Firstname}-{i + 1}", Content = "Some content" }
-                    ));
-                DocumentRepository.MakeOwnedDocumentToUser(user.Id, doc.Id);
+                var doc = new DocumentDTO()
+                {
+                    Index = $"Doc-{userDTO.Firstname}-{i + 1}",
+                    Content = "Some content",
+                    Owner = userDTO
+                };
+                userDTO.Documents.Add(doc);
                 if (i % 2 == 0)
                 {
-                    ApprovalRepository.AddApproval(user.Id, doc.Id);
+                    userDTO.Approvals.Add(
+                        new ApprovalDTO()
+                        {
+                            User = userDTO,
+                            Document = doc
+                        }
+                    );
                 }
             }
         }

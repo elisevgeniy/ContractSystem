@@ -1,40 +1,52 @@
-﻿using ContractSystem.Core.Models;
-using ContractSystem.Core.DTO;
+﻿using ContractSystem.Core.DTO;
+using ContractSystem.Core.IRepositories;
+using ContractSystem.Core.Models;
 using ContractSystem.Core.Models.In;
 using ContractSystem.Core.Models.Out;
-using ContractSystem.RepositoryOld;
+using ContractSystem.Core.Models.Search;
+using ContractSystem.Repositories;
+using Mapster;
 
 namespace ContractSystem.Service
 {
     public class DocumentService
     {
-        public static List<DocumentOut> GetAllDocumentsByUser(int user_id)
+        private IDocumentRepository _documentRepository;
+        private IApprovalRepository _approvalRepository;
+
+        public DocumentService(IDocumentRepository documentRepository, IApprovalRepository approvalRepository)
         {
-            return MapperManager.Map(DocumentRepository.GetAllDocumentsByUser(user_id));
+            _documentRepository = documentRepository;
+            _approvalRepository = approvalRepository;
         }
-        public static List<DocumentOut> GetDocumentForApproveByUser(int user_id)
+
+        public List<DocumentOut> GetAllDocumentsByUser(UserSearch userSearch)
         {
-            var result = new List<DocumentOut>();
-            List<ApprovalOut> approvals = MapperManager.Map(ApprovalRepository.GetApprovalsByUser(user_id));
-            result = approvals.Where(approval => !approval.Document.IsApproved).Select(approval => approval.Document).ToList();
-            return result;
+            var userDTO = userSearch.Adapt<UserDTO>();
+            var docDTOs = _documentRepository.GetAllByUser(userDTO);
+            return docDTOs.Adapt<List<DocumentOut>>();
         }
-        public static DocumentOut AddDocumentByUser(string index, string content, int user_id)
+        public List<DocumentOut> GetDocumentForApproveByUser(UserSearch userSearch)
         {
-            var doc = MapperManager.Map(DocumentRepository.AddDocument(
-                MapperManager.Map(new DocumentIn()
-                {
-                    Content = content,
-                    Index = index
-                }
-                )));
-            DocumentRepository.MakeOwnedDocumentToUser(user_id, doc.Id);
-            ApprovalRepository.AddApproval(user_id, doc.Id);
-            return doc;
+            return _approvalRepository.GetAllByUser(userSearch.Adapt<UserDTO>())
+                                        .Select(a => a.Document.Adapt<DocumentOut>())
+                                        .ToList();
         }
-        public static bool Approve(int documentId, int user_id)
+        public DocumentOut AddDocumentByUser(DocumentIn documentIn, UserSearch userSearch)
         {
-            return ApprovalRepository.UpdateApproval(user_id, documentId, true);
+            var docDTO = documentIn.Adapt<DocumentDTO>();
+            docDTO.OwnerId = userSearch.Id;
+            docDTO = _documentRepository.Add(docDTO);
+            return docDTO.Adapt<DocumentOut>(); // TODO: Разобраться, почему падает Mapster
+        }
+        public void Approve(ApprovalSearch approvalSearch)
+        {
+            _approvalRepository.Update(new ApprovalDTO()
+            {
+                UserId = approvalSearch.User.Id,
+                DocumentId = approvalSearch.Document.Id,
+                IsApproved = true
+            });
         }
     }
 }

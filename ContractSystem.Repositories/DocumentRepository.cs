@@ -1,6 +1,8 @@
 ﻿using ContractSystem.Core;
 using ContractSystem.Core.DTO;
 using ContractSystem.Core.IRepositories;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +23,14 @@ namespace ContractSystem.Repositories
         public List<DocumentDTO> GetAll()
         {
             return _dataContext.Documents.DefaultIfEmpty().ToList();
+        }
+
+        public List<DocumentDTO> GetAllByUser(UserDTO userDTO)
+        {
+            return _dataContext.Documents
+                                .Include(d => d.Owner)
+                                .Where(d => d.Owner.Id == userDTO.Id)
+                                .ToList();
         }
 
         public DocumentDTO? GetById(int id)

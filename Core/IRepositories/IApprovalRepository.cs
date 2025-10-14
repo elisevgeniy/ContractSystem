@@ -11,6 +11,8 @@ namespace ContractSystem.Core.IRepositories
     {
         public List<ApprovalDTO> GetAll();
 
+        public List<ApprovalDTO> GetAllByUser(UserDTO userDTO);
+
         public ApprovalDTO? GetById(int id);
 
         public ApprovalDTO Add(ApprovalDTO approvalDTO);

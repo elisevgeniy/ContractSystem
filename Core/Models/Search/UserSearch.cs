@@ -4,16 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ContractSystem.Core.DTO
+namespace ContractSystem.Core.Models.Search
 {
-    public class UserDTO
+    public class UserSearch
     {
         public int Id { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
-
-        public List<DocumentDTO> Documents { get; set; } = new();
-
-        public List<ApprovalDTO> Approvals { get; set; } = new();
     }
 }

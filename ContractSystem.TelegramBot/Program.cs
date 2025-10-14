@@ -1,7 +1,13 @@
-using Microsoft.Extensions.Options;
-using Telegram.Bot;
 using Console.Advanced;
 using Console.Advanced.Services;
+using ContractSystem.Core;
+using ContractSystem.Core.IRepositories;
+using ContractSystem.Repositories;
+using ContractSystem.Service;
+using Mapster;
+using MapsterMapper;
+using Microsoft.Extensions.Options;
+using Telegram.Bot;
 
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
@@ -21,9 +27,20 @@ IHost host = Host.CreateDefaultBuilder(args)
                     return new TelegramBotClient(options, httpClient);
                 });
 
+        TypeAdapterConfig.GlobalSettings.Apply(new MapsterConfig());
+        services.AddMapster();
+
         services.AddScoped<UpdateHandler>();
         services.AddScoped<ReceiverService>();
         services.AddHostedService<PollingService>();
+
+        services.AddDbContext<DataContext>();
+
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IDocumentRepository, DocumentRepository>();
+        services.AddScoped<IApprovalRepository, ApprovalRepository>();
+        services.AddScoped<UserService>();
+        services.AddScoped<DocumentService>();
     })
     .Build();
 

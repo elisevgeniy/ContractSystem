@@ -25,7 +25,7 @@ namespace ContractSystem.Repositories
 
         public UserDTO? GetFirstByFirstname(string firstname)
         {
-            return _dataContext.Users.Where(u => u.Firstname == firstname).First(); ;
+            return _dataContext.Users.Where(u => u.Firstname == firstname).SingleOrDefault(); ;
         }
 
         public UserDTO Add(UserDTO userDTO)

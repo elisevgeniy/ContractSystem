@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +15,10 @@ namespace ContractSystem.Core.DTO
         public string Content { get; set; }
         public bool IsApproved { get; set; }
 
-        public List<ApprovalDTO> Approvals { get; set; }
+        [ForeignKey("FK_Documents_Users_OwnerId")]
+        public int OwnerId { get; set; }
+
+        public List<ApprovalDTO> Approvals { get; set; } = new ();
 
         public UserDTO Owner { get; set; }
     }

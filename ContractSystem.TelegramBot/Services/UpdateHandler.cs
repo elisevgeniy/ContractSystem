@@ -1,5 +1,10 @@
+using ContractSystem.Core.IRepositories;
+using ContractSystem.Core.Models.In;
 using ContractSystem.Core.Models.Out;
+using ContractSystem.Core.Models.Search;
 using ContractSystem.Service;
+using Mapster;
+using Microsoft.Extensions.Logging;
 using System.Text;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
@@ -12,7 +17,7 @@ using UserDTO = ContractSystem.Core.DTO.UserDTO;
 
 namespace Console.Advanced.Services;
 
-public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger) : IUpdateHandler
+public class UpdateHandler : IUpdateHandler
 {
     #region menues
     private static InlineKeyboardMarkup MenuMain = new InlineKeyboardMarkup()
@@ -25,6 +30,22 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
             .AddNewRow()
                 .AddButton("Запросить договор на согласование", "AskDocForApprove");
 
+    #endregion
+
+    ITelegramBotClient bot;
+    ILogger<UpdateHandler> logger;
+
+    #region services
+    UserService _userService;
+    DocumentService _documentService;
+
+    public UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger, UserService userService, DocumentService documentService)
+    {
+        this.bot = bot;
+        this.logger = logger;
+        _userService = userService;
+        _documentService = documentService;
+    }
     #endregion
 
     public async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, HandleErrorSource source, CancellationToken cancellationToken)
@@ -81,7 +102,7 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
 
     async Task<Message> SendLogin(Message msg)
     {
-        UserOut user = UserService.AddUser(msg.From.Username ?? msg.From.Id.ToString(), msg.From.FirstName);
+        UserOut user = _userService.AddUser(msg.From.Username ?? msg.From.Id.ToString(), msg.From.FirstName);
         
         return await bot.SendMessage(msg.Chat, $"Вы вошли как {user.Firstname}", replyMarkup: MenuMain);
     }
@@ -94,16 +115,22 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
         String DocNumber = MessageData[0].Substring(5);
         String DocContent = MessageData.Length > 1 ? MessageData[1] : "Пустой документ";
 
-        var user = UserService.GetUser(msg.From!.Username ?? msg.From.Id.ToString());
+        var user = _userService.GetUser(msg.From!.Username ?? msg.From.Id.ToString());
 
-        try
-        {
-            var doc = DocumentService.AddDocumentByUser(DocNumber, DocContent, user.Id);
+        //try
+        //{
+            var doc = _documentService.AddDocumentByUser(
+                new DocumentIn()
+                {
+                    Index = DocNumber,
+                    Content = DocContent
+                },
+                user.Adapt<UserSearch>());
             return await bot.SendMessage(msg.Chat, $"Добавлен договор № {doc.Index}\nСогласован: {doc.IsApproved}\nСодержимое: {doc.Content}", ParseMode.Html);
-        } catch (Exception e)
-        {
-            return await bot.SendMessage(msg.Chat, "Выероятно, договор с таким номером уже добавлен");
-        }
+        //} catch (Exception e)
+        //{
+        //    return await bot.SendMessage(msg.Chat, "Выероятно, договор с таким номером уже добавлен");
+        //}
     }
 
 
@@ -117,7 +144,7 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
     {
         logger.LogInformation("Received inline keyboard callback from: {CallbackQueryId}", callbackQuery.Id);
 
-        var user = UserService.GetUser(callbackQuery.From.Username ?? callbackQuery.From.Id.ToString());
+        var user = _userService.GetUser(callbackQuery.From.Username ?? callbackQuery.From.Id.ToString());
         if (user == null)
         {
             await Usage(callbackQuery.Message!);
@@ -127,7 +154,7 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
         switch (callbackQuery.Data)
         {
             case "UserDocList":
-                var docMessages = PrepareDocumentList(user);
+                var docMessages = PrepareDocumentList(user.Adapt<UserSearch>());
                 await bot.SendMessage(callbackQuery.Message!.Chat,
                     (docMessages.Count == 0) ? "Договоров нет" : "Список Ваших договоров:"
                     , ParseMode.Html);
@@ -157,19 +184,28 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
                     string docIdStr = callbackQuery.Data.Split("_").ToList().Last();
                     if (int.TryParse(docIdStr, out int docId))
                     {
-                        if (DocumentService.Approve(docId, user.Id))
+                        try
+                        {
+                            _documentService.Approve(new ApprovalSearch()
+                            {
+                                Document = new DocumentSearch() { Id = docId},
+                                User = user.Adapt<UserSearch>(),
+                            });
                             await bot.SendMessage(callbackQuery.Message!.Chat, "Договор согласован", ParseMode.Html);
-                        else
+                        }
+                        catch (Exception ex)
+                        {
                             await bot.SendMessage(callbackQuery.Message!.Chat, "Произошла ошибка", ParseMode.Html);
+                        }
                     }
                 }
                 break;
         }
     }
 
-    private List<String> PrepareDocumentList(UserOut user)
+    private List<String> PrepareDocumentList(UserSearch user)
     {
-        var docs = DocumentService.GetAllDocumentsByUser(user.Id);
+        var docs = _documentService.GetAllDocumentsByUser(user);
         var result = new List<String>();
         foreach (var doc in docs)
         {
@@ -181,7 +217,7 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
 
     private InlineKeyboardMarkup PrepareDocumentApproveList(UserOut user)
     {
-        var docs = DocumentService.GetDocumentForApproveByUser(user.Id);
+        var docs = _documentService.GetDocumentForApproveByUser(user.Adapt<UserSearch>());
         InlineKeyboardMarkup docList = new InlineKeyboardMarkup();
         foreach (var doc in docs)
         {

@@ -1,5 +1,6 @@
 ﻿using ContractSystem.Core.DTO;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace ContractSystem.Core
 {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ContractSystem.Core.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,5 +12,7 @@ namespace ContractSystem.Core.Models.Out
         public int Id { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
+        public List<DocumentOut> Documents { get; set; } = new List<DocumentOut>();
+        public List<ApprovalOut> Approvals { get; set; } = new List<ApprovalOut>();
     }
 }
