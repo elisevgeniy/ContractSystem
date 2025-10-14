@@ -1,0 +1,30 @@
+﻿@page "/users"
+
+<PageTitle>Пользователи</PageTitle>
+
+@foreach(var user in users)
+{
+    <UserCard User="user"></UserCard>
+
+   @*  <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">@user.Firstname @user.Lastname</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Id: @user.Id</h6>
+            <p class="card-text">Всего договоров: @user.Documents.Count<br /> Всего согласований: @user.Approvals.Count</p>
+            <a href="#" class="card-link">Согласования</a>
+            <a href="#" class="card-link">Договоры</a>
+        </div>
+    </div> *@
+}
+
+@code {
+    [Inject]
+    public UserService userService { get; set; }
+
+    List<UserOut> users = new ();
+
+    protected override void OnInitialized()
+    {
+        users= userService.getAll();
+    }
+}

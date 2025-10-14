@@ -4,6 +4,7 @@ using ContractSystem.Repositories;
 using ContractSystem.Service;
 using ContractSystem.WebApp.Client.Pages;
 using ContractSystem.WebApp.Components;
+using Mapster;
 
 namespace ContractSystem.WebApp
 {
@@ -18,15 +19,19 @@ namespace ContractSystem.WebApp
                 .AddInteractiveServerComponents()
                 .AddInteractiveWebAssemblyComponents();
 
+            TypeAdapterConfig.GlobalSettings.Apply(new MapsterConfig());
+            builder.Services.AddMapster();
+                        
             builder.Services.AddDbContext<DataContext>();
-
+            
             builder.Services.AddScoped<IUserRepository, UserRepository>();
-
+            builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
+            builder.Services.AddScoped<IApprovalRepository, ApprovalRepository>();
             builder.Services.AddScoped<UserService>();
+            builder.Services.AddScoped<DocumentService>();
 
-            //builder.Services.AddScoped<IUSer>
 
-            var app = builder.Build();
+           var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

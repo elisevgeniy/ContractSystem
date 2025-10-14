@@ -1,0 +1,48 @@
+﻿@page "/documents"
+@rendermode InteractiveServer
+
+<PageTitle>Документы</PageTitle>
+
+<InputText @bind-Value="filterText"></InputText>
+<button @onclick="OnFilter">Фильтр</button>
+<label>@filterText</label>
+
+<div class="row">
+    @foreach (var doc in filtredDocuments)
+    {
+        <DocumentCard Document="doc"></DocumentCard>
+    }
+</div>
+
+
+@code {
+    [Inject]
+    public DocumentService documentService { get; set; }
+
+    List<DocumentOut> documents = new();
+    List<DocumentOut> filtredDocuments = new();
+
+    string filterText = "";
+
+    protected override void OnInitialized()
+    {
+        documents = documentService.GetAll();
+        OnFilter();
+    }
+
+    protected void OnFilter()
+    {
+        var filterTextLow = filterText.ToLower();
+        filtredDocuments = documents
+            .Where(d => 
+                filterTextLow.Length == 0 
+                ||
+                d.Index.ToLower().Contains(filterTextLow)
+                ||
+                d.Content.ToLower().Contains(filterTextLow)
+            )
+            .ToList();
+
+        StateHasChanged();
+    }
+}

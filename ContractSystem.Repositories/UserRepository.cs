@@ -1,6 +1,7 @@
 ﻿using ContractSystem.Core;
 using ContractSystem.Core.DTO;
 using ContractSystem.Core.IRepositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace ContractSystem.Repositories
 {
@@ -15,12 +16,19 @@ namespace ContractSystem.Repositories
 
         public List<UserDTO> GetAll()
         {
-            return _dataContext.Users.ToList();
+            return _dataContext.Users
+                        .Include(u => u.Documents)
+                        .Include(u => u.Approvals)
+                        .ToList();
         }
 
         public UserDTO? GetById(int id)
         {
-            return _dataContext.Users.Find(id);
+            return _dataContext.Users
+                        .Include(u => u.Documents)
+                        .Include(u => u.Approvals)
+                        .Where(u => u.Id == id)
+                        .Single();
         }
 
         public UserDTO? GetFirstByFirstname(string firstname)
