@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ContractSystem.Core.Models.DTO
+namespace ContractSystem.Core.Models.Search
 {
-    public class DocumentDTO
+    public class DocumentSearch
     {
         public int Id { get; set; }
         public string Index { get; set; }

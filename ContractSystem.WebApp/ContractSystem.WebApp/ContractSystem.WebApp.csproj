@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ContractSystem.Repositories\ContractSystem.Repositories.csproj" />
+    <ProjectReference Include="..\..\ContractSystem.Service\ContractSystem.Services.csproj" />
+    <ProjectReference Include="..\..\Core\ContractSystem.Core.csproj" />
+    <ProjectReference Include="..\ContractSystem.WebApp.Client\ContractSystem.WebApp.Client.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.20" />
+  </ItemGroup>
+
+</Project>

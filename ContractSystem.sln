@@ -8,17 +8,22 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem.Services", "ContractSystem.Service\ContractSystem.Services.csproj", "{B1B535DD-517D-4E89-A4E9-B5F64D61E825}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5AC56427-5E96-4ADC-8AA3-75177C2AE342} = {5AC56427-5E96-4ADC-8AA3-75177C2AE342}
-		{EF1C8B32-2D35-4C32-BA47-3BCAB6DCAF34} = {EF1C8B32-2D35-4C32-BA47-3BCAB6DCAF34}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem.Repositories", "ContractSystem.Repository\ContractSystem.Repositories.csproj", "{EF1C8B32-2D35-4C32-BA47-3BCAB6DCAF34}"
-	ProjectSection(ProjectDependencies) = postProject
-		{5AC56427-5E96-4ADC-8AA3-75177C2AE342} = {5AC56427-5E96-4ADC-8AA3-75177C2AE342}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem._Debug", "ContractSystem.Debug\ContractSystem._Debug.csproj", "{CF33385F-96D7-4FC6-8DAB-F333D69D3908}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem.TelegramBot", "ContractSystem.TelegramBot\ContractSystem.TelegramBot.csproj", "{A03AA4B3-FDB5-406F-9804-DFA3346E38C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem.WebApp", "ContractSystem.WebApp\ContractSystem.WebApp\ContractSystem.WebApp.csproj", "{A0A54BC1-B6EE-47E2-81BE-30AD02954511}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem.WebApp.Client", "ContractSystem.WebApp\ContractSystem.WebApp.Client\ContractSystem.WebApp.Client.csproj", "{CB4FD529-8CBD-4D03-987C-1BD9B2C0410D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem.Repositories", "ContractSystem.Repositories\ContractSystem.Repositories.csproj", "{716365AA-80FC-4884-A90C-8E867468E36E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,10 +39,6 @@ Global
 		{B1B535DD-517D-4E89-A4E9-B5F64D61E825}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1B535DD-517D-4E89-A4E9-B5F64D61E825}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1B535DD-517D-4E89-A4E9-B5F64D61E825}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EF1C8B32-2D35-4C32-BA47-3BCAB6DCAF34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EF1C8B32-2D35-4C32-BA47-3BCAB6DCAF34}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EF1C8B32-2D35-4C32-BA47-3BCAB6DCAF34}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EF1C8B32-2D35-4C32-BA47-3BCAB6DCAF34}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CF33385F-96D7-4FC6-8DAB-F333D69D3908}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CF33385F-96D7-4FC6-8DAB-F333D69D3908}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF33385F-96D7-4FC6-8DAB-F333D69D3908}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -46,6 +47,18 @@ Global
 		{A03AA4B3-FDB5-406F-9804-DFA3346E38C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A03AA4B3-FDB5-406F-9804-DFA3346E38C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A03AA4B3-FDB5-406F-9804-DFA3346E38C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0A54BC1-B6EE-47E2-81BE-30AD02954511}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0A54BC1-B6EE-47E2-81BE-30AD02954511}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0A54BC1-B6EE-47E2-81BE-30AD02954511}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0A54BC1-B6EE-47E2-81BE-30AD02954511}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB4FD529-8CBD-4D03-987C-1BD9B2C0410D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB4FD529-8CBD-4D03-987C-1BD9B2C0410D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB4FD529-8CBD-4D03-987C-1BD9B2C0410D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB4FD529-8CBD-4D03-987C-1BD9B2C0410D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{716365AA-80FC-4884-A90C-8E867468E36E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{716365AA-80FC-4884-A90C-8E867468E36E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{716365AA-80FC-4884-A90C-8E867468E36E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{716365AA-80FC-4884-A90C-8E867468E36E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

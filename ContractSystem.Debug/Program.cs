@@ -1,5 +1,7 @@
-﻿using ContractSystem.Core.DTO;
-using ContractSystem.Repository;
+﻿using ContractSystem.Core;
+using ContractSystem.Core.DTO;
+using ContractSystem.Repositories;
+using Mapster;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 
@@ -9,22 +11,24 @@ namespace ContractSystem.Debug
     {
         private static void Main(string[] args)
         {
-            //    Console.WriteLine(UserRepository.GetAllUsers().Count);
-            //    UserIn u = UserRepository.AddUser("Иванов", "Иван");
-            //    print(u);
-            //    string temp = u.Firstname;
-            //    u.Firstname = u.Lastname;
-            //    u.Lastname = temp;
-            //    UserRepository.UpdateUser(u);
-            //    print(UserRepository.GetAllUsers());
-            //    Console.WriteLine(UserRepository.GetAllUsers().Count);
-            //    UserRepository.DeleteUserById(u.Id);
-            //    Console.WriteLine(UserRepository.GetAllUsers().Count);
+            DataContext dataContext = new DataContext();
+            UserRepository userRepository = new UserRepository(dataContext);
+            DocumentRepository documentRepository = new DocumentRepository(dataContext);
+            ApprovalRepository approvalRepository = new ApprovalRepository(dataContext);
 
-            //DocumentIn document = DocumentRepository.AddDocument("Doc-2025-2", "Some data");
-            //print(document);
+            var user = userRepository.Add(new UserDTO()
+            {
+                Firstname = "FTest",
+                Lastname = "LTest"
+            });
 
-            print(ApprovalRepository.GetApprovalsByUser(1));
+            var doc = documentRepository.Add(new DocumentDTO()
+            {
+                Index = "Ind",
+                Content = "Doc Content",
+                Owner = user,
+            });
+
         }
 
         private static void print(Object obj)

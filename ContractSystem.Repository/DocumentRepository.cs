@@ -1,9 +1,9 @@
-﻿using ContractSystem.Core.Models.DTO;
+﻿using ContractSystem.Core.DTO;
 using ContractSystem.Core.Models.In;
-using Core;
+using ContractSystem.Core;
 using Npgsql;
 
-namespace ContractSystem.Repository
+namespace ContractSystem.RepositoryOld
 {
     public class DocumentRepository
     {
