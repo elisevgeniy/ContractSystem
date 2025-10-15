@@ -5,7 +5,7 @@
 
 <InputText @bind-Value="filterText"></InputText>
 <button @onclick="OnFilter">Фильтр</button>
-<label>@filterText</label>
+<button @onclick="ShowAddModal">Добавить</button>
 
 <div class="row">
     @foreach (var doc in filtredDocuments)
@@ -14,19 +14,68 @@
     }
 </div>
 
+@if (isModalShowed)
+{
+    <div class="modal show d-block" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <EditForm Model="documentNew" OnValidSubmit="SaveAddModal">
+                    <DataAnnotationsValidator />
+                    <div class="modal-header">
+                        <h5 class="modal-title">Добавление договора</h5>
+                        <button type="button" class="btn-close" aria-label="Close" @onclick="HideAddModal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Номер договора</label>
+                            <InputText class="form-control" @bind-Value="documentNew.Index" />
+                            <ValidationMessage For="@(() => documentNew.Index)" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Содержание договора</label>
+                            <InputTextArea class="form-control" @bind-Value="documentNew.Content" />
+                            <ValidationMessage For="@(() => documentNew.Content)" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ответственный</label>
+                            <InputSelect class="form-control" @bind-Value="documentNew.OwnerId">
+                                <option value=""></option>
+                                @foreach (var user in users)
+                                {
+                                    <option value="@user.Id">@user.Firstname @user.Lastname</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => documentNew.OwnerId)" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="HideAddModal">Отмена</button>
+                        <button type="submit" class="btn btn-primary">Добавить</button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
     [Inject]
     public DocumentService documentService { get; set; }
+    [Inject]
+    public UserService userService { get; set; }
 
     List<DocumentOut> documents = new();
     List<DocumentOut> filtredDocuments = new();
+    List<UserOut> users = new();
 
     string filterText = "";
+    bool isModalShowed = false;
+    public DocumentIn documentNew;
 
     protected override void OnInitialized()
     {
         documents = documentService.GetAll();
+        users = userService.getAll();
         OnFilter();
     }
 
@@ -34,8 +83,8 @@
     {
         var filterTextLow = filterText.ToLower();
         filtredDocuments = documents
-            .Where(d => 
-                filterTextLow.Length == 0 
+            .Where(d =>
+                filterTextLow.Length == 0
                 ||
                 d.Index.ToLower().Contains(filterTextLow)
                 ||
@@ -44,5 +93,22 @@
             .ToList();
 
         StateHasChanged();
+    }
+    protected void ShowAddModal()
+    {
+        documentNew = new();
+        isModalShowed = true;
+    }
+    protected void HideAddModal()
+    {
+        isModalShowed = false;
+    }
+    protected void SaveAddModal()
+    {
+        HideAddModal();
+        var doc = documentService.AddDocument(documentNew);
+        documents.Add(doc);
+
+        OnFilter();
     }
 }

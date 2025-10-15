@@ -37,10 +37,9 @@ namespace ContractSystem.Service
                                         .Select(a => a.Document.Adapt<DocumentOut>())
                                         .ToList();
         }
-        public DocumentOut AddDocumentByUser(DocumentIn documentIn, UserSearch userSearch)
+        public DocumentOut AddDocument(DocumentIn documentIn)
         {
             var docDTO = documentIn.Adapt<DocumentDTO>();
-            docDTO.OwnerId = userSearch.Id;
             docDTO = _documentRepository.Add(docDTO);
             return docDTO.Adapt<DocumentOut>(); // TODO: Разобраться, почему падает Mapster
         }
