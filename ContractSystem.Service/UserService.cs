@@ -17,6 +17,13 @@ namespace ContractSystem.Service
             _userRepository = userRepository;
         }
 
+        public UserOut getById(int id)
+        {
+            var userDTO = _userRepository.GetById(id);
+            var result = userDTO.Adapt<UserOut>();
+            return result;
+        }
+
         public List<UserOut> getAll()
         {
             var userDTOs = _userRepository.GetAll();

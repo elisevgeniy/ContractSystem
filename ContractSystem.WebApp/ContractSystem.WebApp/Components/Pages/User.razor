@@ -1,0 +1,23 @@
+﻿@page "/users/{Id:int}"
+
+<h3>Пользователь</h3>
+<label>Имя</label>
+<p>@user.Firstname</p>
+<label>Фамилия</label>
+<p>@user.Lastname</p>
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    [Inject]
+    UserService userService { get; set; }
+
+    private UserOut user;
+
+    protected override void OnInitialized()
+    {
+        user = userService.getById(Id);
+    }
+}   

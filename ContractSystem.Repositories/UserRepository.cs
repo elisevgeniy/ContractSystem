@@ -28,7 +28,7 @@ namespace ContractSystem.Repositories
                         .Include(u => u.Documents)
                         .Include(u => u.Approvals)
                         .Where(u => u.Id == id)
-                        .Single();
+                        .FirstOrDefault();
         }
 
         public UserDTO? GetFirstByFirstname(string firstname)
