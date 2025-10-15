@@ -13,7 +13,8 @@ namespace ContractSystem.Core.Models.Out
         public string Index { get; set; }
         public string Content { get; set; }
         public bool IsApproved { get; set; }
-        //public List<ApprovalOut> Approvals { get; set; }
+        
+        public List<ApprovalOut> Approvals { get; set; }
         public UserOut Owner { get; set; }
     }
 }

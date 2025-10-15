@@ -38,7 +38,11 @@ namespace ContractSystem.Repositories
 
         public DocumentDTO? GetById(int id)
         {
-            return _dataContext.Documents.Find(id);
+            return _dataContext.Documents
+                                .Include(d => d.Owner)
+                                .Include(d => d.Approvals)
+                                .Where(d => d.Id == id)
+                                .FirstOrDefault();
         }
 
         public DocumentDTO Add(DocumentDTO documentDTO)

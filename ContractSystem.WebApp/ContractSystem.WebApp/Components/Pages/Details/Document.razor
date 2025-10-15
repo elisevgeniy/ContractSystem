@@ -1,0 +1,31 @@
+﻿@page "/documents/{Id:int}"
+
+<h3>Документ</h3>
+<label>Номер договора</label>
+<p>@document.Index</p>
+<label>Содержание</label>
+<p>@document.Content</p>
+<label>Владелец</label>
+<UserCard User="document.Owner" />
+<label>Согласование:</label>
+<div>
+    @foreach(var approval in document.Approvals)
+    {
+        <UserCard User="approval.User" />
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    [Inject]
+    DocumentService documentService { get; set; }
+
+    private DocumentOut document;
+
+    protected override void OnInitialized()
+    {
+        document = documentService.GetById(Id);
+    }
+}   

@@ -19,6 +19,11 @@ namespace ContractSystem.Service
             _documentRepository = documentRepository;
             _approvalRepository = approvalRepository;
         }
+        public DocumentOut GetById(int id)
+        {
+            var docDTO = _documentRepository.GetById(id);
+            return docDTO.Adapt<DocumentOut>();
+        }
         public List<DocumentOut> GetAll()
         {
             var docDTOs = _documentRepository.GetAll();
