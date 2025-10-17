@@ -1,11 +1,13 @@
 ﻿@page "/users/{Id:int}"
 
-<h3>Пользователь</h3>
-<label>Имя</label>
-<p>@user.Firstname</p>
-<label>Фамилия</label>
-<p>@user.Lastname</p>
-
+@if (user != null)
+{
+    <h3>Пользователь</h3>
+    <label>Имя</label>
+    <p>@user!.Firstname</p>
+    <label>Фамилия</label>
+    <p>@user!.Lastname</p>
+}
 
 @code {
     [Parameter]
@@ -14,10 +16,17 @@
     [Inject]
     UserService userService { get; set; }
 
+    [CascadingParameter]
+    HttpContext httpContext { get; set; }
+
     private UserOut user;
 
     protected override void OnInitialized()
     {
         user = userService.getById(Id);
+        if (user == null)
+        {
+            httpContext.Response.Redirect("/");
+        }
     }
-}   
+}

@@ -22,10 +22,17 @@
     [Inject]
     DocumentService documentService { get; set; }
 
+    [CascadingParameter]
+    HttpContext httpContext { get; set; }
+
     private DocumentOut document;
 
     protected override void OnInitialized()
     {
         document = documentService.GetById(Id);
+        if (document == null)
+        {
+            httpContext.Response.Redirect("/");
+        }
     }
 }   
