@@ -1,0 +1,26 @@
+﻿<div class="card" style="width: 18rem;" >
+    <div class="card-body">
+        <h5 class="card-title">@Approval.Document.Index</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Id: @Approval.Id</h6>
+        <p class="card-text">@Approval.Document.Content <br /> Согласован: @Approval.IsApproved</p>
+        <a href="#" class="card-link">Владелец</a>
+    </div>
+    <div class="card-footer">
+        <button class="btn btn-primary" type="submit" @onclick="OnApprove">Согласовать</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public ApprovalOut Approval { get; set; }
+    [Parameter]
+    public Action<ApproveDocumentModel> Approve { get; set; }
+
+    void OnApprove()
+    {
+        Approve(new ApproveDocumentModel()
+            {
+                Id = Approval.Id
+            });
+    }
+}

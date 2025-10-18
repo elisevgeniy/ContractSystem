@@ -36,9 +36,14 @@ namespace ContractSystem.Repositories
             return _dataContext.Approvals.Include(a => a.User).Include(a => a.Document).ToList();
         }
 
-        public List<ApprovalDTO> GetAllByUser(UserDTO userDTO)
+        public List<ApprovalDTO> GetAllByUser(int userId)
         {
-            return _dataContext.Approvals.Include(a => a.User).Include(a => a.Document).Where(a => a.User.Id == userDTO.Id).ToList();
+            return _dataContext.Approvals.Include(a => a.User).Include(a => a.Document).Where(a => a.User.Id == userId).ToList();
+        }
+
+        public ApprovalDTO? GetByUserAndDocument(int userId, int documentId)
+        {
+            return _dataContext.Approvals.Include(a => a.User).Include(a => a.Document).Where(a => a.UserId == userId && a.DocumentId == documentId).FirstOrDefault();
         }
 
         public ApprovalDTO? GetById(int id)

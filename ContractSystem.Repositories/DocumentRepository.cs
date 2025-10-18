@@ -28,11 +28,11 @@ namespace ContractSystem.Repositories
                                 .ToList();
         }
 
-        public List<DocumentDTO> GetAllByUser(UserDTO userDTO)
+        public List<DocumentDTO> GetAllByUser(int userId)
         {
             return _dataContext.Documents
                                 .Include(d => d.Owner)
-                                .Where(d => d.Owner.Id == userDTO.Id)
+                                .Where(d => d.Owner.Id == userId)
                                 .ToList();
         }
 

@@ -8,10 +8,8 @@ namespace ContractSystem.Core.Models.In
 {
     public class ApprovalIn
     {
-        public int Id { get; set; }
-        public DocumentIn Document { get; set; }
-        public UserIn User { get; set; }
-        public DateTime? ApprovalDate { get; set; }
+        public int DocumentId { get; set; }
+        public int UserId { get; set; }
         public bool IsApproved { get; set; }
     }
 }

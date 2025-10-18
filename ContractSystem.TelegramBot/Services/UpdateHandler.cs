@@ -119,13 +119,13 @@ public class UpdateHandler : IUpdateHandler
 
         //try
         //{
-            var doc = _documentService.AddDocumentByUser(
+            var doc = _documentService.AddDocument(
                 new DocumentIn()
                 {
                     Index = DocNumber,
-                    Content = DocContent
-                },
-                user.Adapt<UserSearch>());
+                    Content = DocContent,
+                    OwnerId = user.Id
+                });
             return await bot.SendMessage(msg.Chat, $"Добавлен договор № {doc.Index}\nСогласован: {doc.IsApproved}\nСодержимое: {doc.Content}", ParseMode.Html);
         //} catch (Exception e)
         //{
@@ -186,10 +186,10 @@ public class UpdateHandler : IUpdateHandler
                     {
                         try
                         {
-                            _documentService.Approve(new ApprovalSearch()
+                            _documentService.Approve(new ApprovalIn()
                             {
-                                Document = new DocumentSearch() { Id = docId},
-                                User = user.Adapt<UserSearch>(),
+                                DocumentId = docId,
+                                UserId = user.Id,
                             });
                             await bot.SendMessage(callbackQuery.Message!.Chat, "Договор согласован", ParseMode.Html);
                         }
@@ -205,7 +205,7 @@ public class UpdateHandler : IUpdateHandler
 
     private List<String> PrepareDocumentList(UserSearch user)
     {
-        var docs = _documentService.GetAllDocumentsByUser(user);
+        var docs = _documentService.GetAllDocumentsByUser(user.Id);
         var result = new List<String>();
         foreach (var doc in docs)
         {
@@ -217,7 +217,7 @@ public class UpdateHandler : IUpdateHandler
 
     private InlineKeyboardMarkup PrepareDocumentApproveList(UserOut user)
     {
-        var docs = _documentService.GetDocumentForApproveByUser(user.Adapt<UserSearch>());
+        var docs = _documentService.GetDocumentForApproveByUser(user.Id);
         InlineKeyboardMarkup docList = new InlineKeyboardMarkup();
         foreach (var doc in docs)
         {

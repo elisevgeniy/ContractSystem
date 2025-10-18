@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace ContractSystem.Core.DTO
 {
+    [Index(nameof(UserId), nameof(DocumentId), Name = "IX_UserIdAndDocumentId", IsUnique = true)]
     public class ApprovalDTO
     {
         public int Id { get; set; }

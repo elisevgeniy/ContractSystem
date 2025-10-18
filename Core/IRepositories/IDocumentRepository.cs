@@ -1,4 +1,5 @@
 ﻿using ContractSystem.Core.DTO;
+using ContractSystem.Core.Models.In;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace ContractSystem.Core.IRepositories
     {
         public List<DocumentDTO> GetAll();
 
-        public List<DocumentDTO> GetAllByUser(UserDTO userDTO);
+        public List<DocumentDTO> GetAllByUser(int userId);
 
         public DocumentDTO? GetById(int id);
 

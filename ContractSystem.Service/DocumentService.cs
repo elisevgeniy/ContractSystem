@@ -30,15 +30,14 @@ namespace ContractSystem.Service
             return docDTOs.Adapt<List<DocumentOut>>();
         }
 
-        public List<DocumentOut> GetAllDocumentsByUser(UserSearch userSearch)
+        public List<DocumentOut> GetAllDocumentsByUser(int userId)
         {
-            var userDTO = userSearch.Adapt<UserDTO>();
-            var docDTOs = _documentRepository.GetAllByUser(userDTO);
+            var docDTOs = _documentRepository.GetAllByUser(userId);
             return docDTOs.Adapt<List<DocumentOut>>();
         }
-        public List<DocumentOut> GetDocumentForApproveByUser(UserSearch userSearch)
+        public List<DocumentOut> GetDocumentForApproveByUser(int userId)
         {
-            return _approvalRepository.GetAllByUser(userSearch.Adapt<UserDTO>())
+            return _approvalRepository.GetAllByUser(userId)
                                         .Select(a => a.Document.Adapt<DocumentOut>())
                                         .ToList();
         }
@@ -48,14 +47,19 @@ namespace ContractSystem.Service
             docDTO = _documentRepository.Add(docDTO);
             return docDTO.Adapt<DocumentOut>(); // TODO: Разобраться, почему падает Mapster
         }
-        public void Approve(ApprovalSearch approvalSearch)
+        public void Approve(ApprovalIn approvalIn)
         {
-            _approvalRepository.Update(new ApprovalDTO()
-            {
-                UserId = approvalSearch.User.Id,
-                DocumentId = approvalSearch.Document.Id,
-                IsApproved = true
-            });
+            ApprovalDTO approvalDTO = _approvalRepository.GetAllByUser(approvalIn.UserId).Where(a => a.DocumentId == approvalIn.DocumentId).FirstOrDefault();
+            approvalDTO.IsApproved = approvalIn.IsApproved;
+            _approvalRepository.Update(approvalDTO);
+        }
+        public void Approve(int approvalId)
+        {
+            ApprovalDTO? approvalDTO = _approvalRepository.GetById(approvalId);
+            if (approvalDTO == null) throw new Exception("Согласование не найдено");
+            approvalDTO.IsApproved = true;
+            approvalDTO.ApprovalDate = new DateTime();
+            _approvalRepository.Update(approvalDTO);
         }
     }
 }

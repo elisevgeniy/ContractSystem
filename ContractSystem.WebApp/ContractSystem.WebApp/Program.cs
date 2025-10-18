@@ -1,3 +1,4 @@
+using Blazored.Toast;
 using ContractSystem.Core;
 using ContractSystem.Core.IRepositories;
 using ContractSystem.Repositories;
@@ -21,7 +22,7 @@ namespace ContractSystem.WebApp
 
             TypeAdapterConfig.GlobalSettings.Apply(new MapsterConfig());
             builder.Services.AddMapster();
-                        
+
             builder.Services.AddDbContext<DataContext>();
             
             builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -29,6 +30,7 @@ namespace ContractSystem.WebApp
             builder.Services.AddScoped<IApprovalRepository, ApprovalRepository>();
             builder.Services.AddScoped<UserService>();
             builder.Services.AddScoped<DocumentService>();
+            builder.Services.AddScoped<ApprovalService>();
 
 
            var app = builder.Build();
