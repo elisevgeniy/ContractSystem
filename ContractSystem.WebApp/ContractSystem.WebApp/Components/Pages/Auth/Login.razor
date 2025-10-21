@@ -1,0 +1,52 @@
+﻿@page "/login"
+@layout Components.Layout.EmptyLayout
+@using System.Security.Claims
+
+
+<div class="row align-items-center justify-content-center min-vh-100">
+    <div class="col-4">
+        <h1 class="mb-3 fw-normal text-center">Авторизация</h1>
+        <EditForm Model="loginModel" OnSubmit="StartLogin" FormName="Login">
+
+            <!-- Email input -->
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="loginModel.Login" id="loginInput" class="form-control" placeholder></InputText>
+                <label for="loginInput">Логин</label>
+                <ValidationMessage For="@(() => loginModel.Login)" />
+            </div>
+
+            <!-- Password input -->
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="loginModel.Password" type="password" id="passwordInput" class="form-control" placeholder></InputText>
+                <label class="form-label" for="passwordInput">Пароль</label>
+                <ValidationMessage For="@(() => loginModel.Password)" />
+            </div>
+            <!-- Section: Design Block -->
+
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Войти</button>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter]
+    public HttpContext httpContext { get; set; }
+
+    [SupplyParameterFromForm]
+    public LoginModel loginModel { get; set; } = new LoginModel();
+
+    public async void StartLogin()
+    {
+        //Идем в базу проверяться и тд
+        var claims = new List<Claim>()
+        {
+            new Claim("Name", loginModel.Login),
+            new Claim(ClaimTypes.Role, "Prezenent")
+        };
+
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var pr = new ClaimsPrincipal(identity);
+
+        await httpContext.SignInAsync(pr);
+    }
+}

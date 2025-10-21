@@ -6,6 +6,8 @@ using ContractSystem.Service;
 using ContractSystem.WebApp.Client.Pages;
 using ContractSystem.WebApp.Components;
 using Mapster;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ContractSystem.WebApp
 {
@@ -20,6 +22,20 @@ namespace ContractSystem.WebApp
                 .AddInteractiveServerComponents()
                 .AddInteractiveWebAssemblyComponents();
 
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(
+                    options =>
+                    {
+                        options.Cookie.Name = "auth_token";
+                        options.LoginPath = "/login";
+                        options.Cookie.MaxAge = TimeSpan.FromMinutes(30);
+                    });
+
+            builder.Services.AddAuthorization();
+            builder.Services.AddCascadingAuthenticationState();
+
+
+
             TypeAdapterConfig.GlobalSettings.Apply(new MapsterConfig());
             builder.Services.AddMapster();
 
@@ -31,6 +47,8 @@ namespace ContractSystem.WebApp
             builder.Services.AddScoped<UserService>();
             builder.Services.AddScoped<DocumentService>();
             builder.Services.AddScoped<ApprovalService>();
+
+
 
 
            var app = builder.Build();
