@@ -47,26 +47,24 @@
     [SupplyParameterFromQuery]
     public string ReturnUrl { get; set; } = "/";
 
+    [Inject]
+    public UserService userService { get; set; }
+
     private bool loginFail = false;
 
-    private static List<LoginModel> logins = new() {
-        new LoginModel()
+    protected override void OnInitialized()
+    {
+        if (userService.getByLogin("admin") == null)
         {
-            Login = "admin",
-            Password = "pass"
-        },
-        new LoginModel()
-        {
-            Login = "user1",
-            Password = "pass1"
-        },
-        new LoginModel()
-        {
-            Login = "user2",
-            Password = "pass2"
-        },
-    };
-
+            userService.AddUser(new Core.Models.In.UserIn()
+            {
+                Login = "admin",
+                Name = "admin",
+                Password = "admin",
+                Role = Core.Models.Role.Admin
+            });
+        }
+    }
 
     public async void StartLogin()
     {
@@ -93,6 +91,10 @@
 
     private bool validateLogin(LoginModel loginModel)
     {
-        return null != logins.Find(l => l.Login.Equals(loginModel.Login) && l.Password.Equals(loginModel.Password));
+        return userService.Auth(new LoginIn()
+            {
+                Login = loginModel.Login,
+                Password = loginModel.Password
+            });
     }
 }

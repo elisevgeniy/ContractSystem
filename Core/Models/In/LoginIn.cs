@@ -7,14 +7,12 @@ using System.Threading.Tasks;
 
 namespace ContractSystem.Core.Models.In
 {
-    public class UserIn
+    public class LoginIn
     {
         [Required(ErrorMessage = "Поле обязательно к заполнению")]
         public string Login { get; set; }
-        [Required(ErrorMessage = "Поле обязательно к заполнению")]
-        public string Name { get; set; }
+
         [Required(ErrorMessage = "Поле обязательно к заполнению")]
         public string Password { get; set; }
-        public Role Role { get; set; } = Role.User;
     }
 }

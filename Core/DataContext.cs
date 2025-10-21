@@ -17,6 +17,8 @@ namespace ContractSystem.Core
 
         public DbSet<ApprovalDTO> Approvals { get; set; }
 
+        public DbSet<LoginDTO> Logins { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql(Options.ConnectionString);

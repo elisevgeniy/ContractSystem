@@ -27,13 +27,14 @@ namespace ContractSystem.Repositories
             return _dataContext.Users
                         .Include(u => u.Documents)
                         .Include(u => u.Approvals)
+                        .Include(u => u.LoginData)
                         .Where(u => u.Id == id)
                         .FirstOrDefault();
         }
 
-        public UserDTO? GetFirstByFirstname(string firstname)
+        public UserDTO? GetByLogin(string login)
         {
-            return _dataContext.Users.Where(u => u.Firstname == firstname).SingleOrDefault(); ;
+            return _dataContext.Users.Include(u => u.LoginData).Where(u => u.Login == login).SingleOrDefault(); ;
         }
 
         public UserDTO Add(UserDTO userDTO)

@@ -7,7 +7,7 @@
         <option value=""></option>
         @foreach (var user in users)
         {
-            <option value="@user.Id">@user.Firstname @user.Lastname</option>
+            <option value="@user.Id">@user.Name</option>
         }
     </InputSelect>
 <button @onclick="OnFilter">Выбрать пользователя</button>

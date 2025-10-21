@@ -24,6 +24,13 @@ namespace ContractSystem.Service
             return result;
         }
 
+        public UserOut getByLogin(string login)
+        {
+            var userDTO = _userRepository.GetByLogin(login);
+            var result = userDTO.Adapt<UserOut>();
+            return result;
+        }
+
         public List<UserOut> getAll()
         {
             var userDTOs = _userRepository.GetAll();
@@ -31,31 +38,43 @@ namespace ContractSystem.Service
             return result;
         }
 
-        public UserOut AddUser(string firstname, string lastname)
+        public UserOut AddUser(UserIn userIn)
         {
             UserOut? userOut = null;
-            UserDTO? userDTO = _userRepository.GetFirstByFirstname(firstname);
-            if (userDTO == null)
+            UserDTO? userDTO = _userRepository.GetByLogin(userIn.Login);
+            if (userDTO != null) throw new Exception("Такой пользователь уже существует");
+
+            userDTO = new UserDTO()
             {
-                userDTO = new UserDTO()
+                Login = userIn.Login,
+                Name = userIn.Name,
+                Role = userIn.Role,
+                LoginData = new LoginDTO()
                 {
-                    Firstname = firstname,
-                    Lastname = lastname
-                };
-                InicializeUser(userDTO);
-                userDTO = _userRepository.Add(userDTO);
-            }
+                    Password = userIn.Password,
+                }
+            };
+            InicializeUser(userDTO);
+            userDTO = _userRepository.Add(userDTO);
+
 
             userOut = userDTO.Adapt<UserOut>();
 
             return userOut;
         }
-        public UserOut? GetUser(string firstname)
+        public UserOut? GetUser(string login)
         {
-            UserDTO? userDTO = _userRepository.GetFirstByFirstname(firstname);
+            UserDTO? userDTO = _userRepository.GetByLogin(login);
 
             if (userDTO == null) return null;
             return userDTO.Adapt<UserOut>();
+        }
+
+        public bool Auth(LoginIn loginIn)
+        {
+            UserDTO? userDTO = _userRepository.GetByLogin(loginIn.Login);
+            if (userDTO == null) return false;
+            return userDTO.LoginData.Password.Equals(loginIn.Password);
         }
 
         private static void InicializeUser(UserDTO userDTO)
@@ -64,7 +83,7 @@ namespace ContractSystem.Service
             {
                 var doc = new DocumentDTO()
                 {
-                    Index = $"Doc-{userDTO.Firstname}-{i + 1}",
+                    Index = $"Doc-{userDTO.Login}-{i + 1}",
                     Content = "Some content",
                     Owner = userDTO
                 };

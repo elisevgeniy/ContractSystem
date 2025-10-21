@@ -3,10 +3,10 @@
 @if (user != null)
 {
     <h3>Пользователь</h3>
+    <label>Логин</label>
+    <p>@user!.Login</p>
     <label>Имя</label>
-    <p>@user!.Firstname</p>
-    <label>Фамилия</label>
-    <p>@user!.Lastname</p>
+    <p>@user!.Name</p>
 }
 
 @code {
