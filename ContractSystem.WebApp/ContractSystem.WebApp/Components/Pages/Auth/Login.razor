@@ -25,6 +25,14 @@
             <!-- Section: Design Block -->
 
             <button class="w-100 btn btn-lg btn-primary" type="submit">Войти</button>
+
+            @if (loginFail)
+            {
+                <div class="alert alert-danger mt-3" role="alert">
+                    Логин или пароль не верный!
+                </div>
+            }
+
         </EditForm>
     </div>
 </div>
@@ -39,19 +47,52 @@
     [SupplyParameterFromQuery]
     public string ReturnUrl { get; set; } = "/";
 
+    private bool loginFail = false;
+
+    private static List<LoginModel> logins = new() {
+        new LoginModel()
+        {
+            Login = "admin",
+            Password = "pass"
+        },
+        new LoginModel()
+        {
+            Login = "user1",
+            Password = "pass1"
+        },
+        new LoginModel()
+        {
+            Login = "user2",
+            Password = "pass2"
+        },
+    };
+
+
     public async void StartLogin()
     {
         //Идем в базу проверяться и тд
-        var claims = new List<Claim>()
+        if (validateLogin(loginModel))
         {
-            new Claim("Name", loginModel.Login),
-            new Claim(ClaimTypes.Role, "Prezenent")
-        };
+            loginFail = false;
+            var claims = new List<Claim>()
+            {
+                new Claim("Name", loginModel.Login),
+                new Claim(ClaimTypes.Role, "Prezenent")
+            };
 
-        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var pr = new ClaimsPrincipal(identity);
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var pr = new ClaimsPrincipal(identity);
 
-        await httpContext.SignInAsync(pr);
-        httpContext.Response.Redirect(ReturnUrl);
+            await httpContext.SignInAsync(pr);
+            httpContext.Response.Redirect(ReturnUrl);
+        } else
+        {
+            loginFail = true;
+        }
+    }
+
+    private bool validateLogin(LoginModel loginModel)
+    {
+        return null != logins.Find(l => l.Login.Equals(loginModel.Login) && l.Password.Equals(loginModel.Password));
     }
 }
