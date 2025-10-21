@@ -7,6 +7,7 @@
     <div class="col-4">
         <h1 class="mb-3 fw-normal text-center">Авторизация</h1>
         <EditForm Model="loginModel" OnSubmit="StartLogin" FormName="Login">
+            <DataAnnotationsValidator />
 
             <!-- Email input -->
             <div class="form-floating mb-3">
@@ -35,6 +36,9 @@
     [SupplyParameterFromForm]
     public LoginModel loginModel { get; set; } = new LoginModel();
 
+    [SupplyParameterFromQuery]
+    public string ReturnUrl { get; set; } = "/";
+
     public async void StartLogin()
     {
         //Идем в базу проверяться и тд
@@ -48,5 +52,6 @@
         var pr = new ClaimsPrincipal(identity);
 
         await httpContext.SignInAsync(pr);
+        httpContext.Response.Redirect(ReturnUrl);
     }
 }
