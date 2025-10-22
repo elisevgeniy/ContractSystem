@@ -15,6 +15,6 @@ namespace ContractSystem.Core.Models.In
         [Required(ErrorMessage = "Содержание договора обязателено")]
         public string Content { get; set; }
         [Required(ErrorMessage = "Выбрать ответственного за договор обязателено")]
-        public int? OwnerId { get; set; }
+        public int OwnerId { get; set; }
     }
 }

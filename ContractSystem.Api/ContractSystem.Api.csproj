@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.21" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ContractSystem.Repositories\ContractSystem.Repositories.csproj" />
+    <ProjectReference Include="..\ContractSystem.Service\ContractSystem.Services.csproj" />
+    <ProjectReference Include="..\Core\ContractSystem.Core.csproj" />
+  </ItemGroup>
+
+</Project>

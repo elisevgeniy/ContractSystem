@@ -1,4 +1,5 @@
 ﻿using ContractSystem.Core.DTO;
+using ContractSystem.Core.Exceptions;
 using ContractSystem.Core.IRepositories;
 using ContractSystem.Core.Models;
 using ContractSystem.Core.Models.In;
@@ -73,7 +74,7 @@ namespace ContractSystem.Service
         public bool Auth(LoginIn loginIn)
         {
             UserDTO? userDTO = _userRepository.GetByLogin(loginIn.Login);
-            if (userDTO == null) return false;
+            if (userDTO == null) throw new NotFoundException();
             return userDTO.LoginData.Password.Equals(loginIn.Password);
         }
 

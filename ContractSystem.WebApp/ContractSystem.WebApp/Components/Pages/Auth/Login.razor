@@ -1,6 +1,7 @@
 ﻿@page "/login"
 @layout Components.Layout.EmptyLayout
 @using System.Security.Claims
+@using ContractSystem.Core.Exceptions
 
 
 <div class="row align-items-center justify-content-center min-vh-100">
@@ -91,10 +92,16 @@
 
     private bool validateLogin(LoginModel loginModel)
     {
-        return userService.Auth(new LoginIn()
+        try
+        {
+            return userService.Auth(new LoginIn()
             {
                 Login = loginModel.Login,
                 Password = loginModel.Password
             });
+        } catch(NotFoundException e)
+        {
+            return false;
+        }
     }
 }

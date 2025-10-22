@@ -1,4 +1,5 @@
 ﻿using ContractSystem.Core.DTO;
+using ContractSystem.Core.Exceptions;
 using ContractSystem.Core.IRepositories;
 using ContractSystem.Core.Models;
 using ContractSystem.Core.Models.In;
@@ -13,11 +14,13 @@ namespace ContractSystem.Service
     {
         private IDocumentRepository _documentRepository;
         private IApprovalRepository _approvalRepository;
+        private UserService _userService;
 
-        public DocumentService(IDocumentRepository documentRepository, IApprovalRepository approvalRepository)
+        public DocumentService(IDocumentRepository documentRepository, IApprovalRepository approvalRepository, UserService userService)
         {
             _documentRepository = documentRepository;
             _approvalRepository = approvalRepository;
+            _userService = userService;
         }
         public DocumentOut GetById(int id)
         {
@@ -43,6 +46,9 @@ namespace ContractSystem.Service
         }
         public DocumentOut AddDocument(DocumentIn documentIn)
         {
+            if (_userService.getById(documentIn.OwnerId) == null)
+                throw new NotFoundException("Пользователь не найден");
+
             var docDTO = documentIn.Adapt<DocumentDTO>();
             docDTO = _documentRepository.Add(docDTO);
             return docDTO.Adapt<DocumentOut>(); // TODO: Разобраться, почему падает Mapster
