@@ -46,8 +46,7 @@ namespace ContractSystem.Service
         }
         public DocumentOut AddDocument(DocumentIn documentIn)
         {
-            if (_userService.getById(documentIn.OwnerId) == null)
-                throw new NotFoundException("Пользователь не найден");
+            var user = _userService.getById(documentIn.OwnerId);
 
             var docDTO = documentIn.Adapt<DocumentDTO>();
             docDTO = _documentRepository.Add(docDTO);

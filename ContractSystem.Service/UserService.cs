@@ -20,9 +20,16 @@ namespace ContractSystem.Service
 
         public UserOut getById(int id)
         {
-            var userDTO = _userRepository.GetById(id);
-            var result = userDTO.Adapt<UserOut>();
-            return result;
+            try
+            {
+                var userDTO = _userRepository.GetById(id);
+                var result = userDTO.Adapt<UserOut>();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new NotFoundException("Пользователь не найден", ex);
+            }
         }
 
         public UserOut getByLogin(string login)

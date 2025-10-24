@@ -1,4 +1,5 @@
-﻿@page "/users/{Id:int}"
+﻿@page "/user/{Id:int}"
+@attribute [Authorize];
 
 @if (user != null)
 {
@@ -23,10 +24,11 @@
 
     protected override void OnInitialized()
     {
-        user = userService.getById(Id);
-        if (user == null)
+        try
         {
-            httpContext.Response.Redirect("/");
+            user = userService.getById(Id);
+        } catch (NotFoundException ex) {
+            httpContext.Response.Redirect("/404");
         }
     }
 }

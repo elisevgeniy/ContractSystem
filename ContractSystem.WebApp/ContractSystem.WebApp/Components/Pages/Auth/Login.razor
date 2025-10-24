@@ -43,7 +43,7 @@
     public HttpContext httpContext { get; set; }
 
     [SupplyParameterFromForm]
-    public LoginModel loginModel { get; set; } = new LoginModel();
+    public LoginIn loginModel { get; set; } = new LoginIn();
 
     [SupplyParameterFromQuery]
     public string ReturnUrl { get; set; } = "/";
@@ -90,7 +90,7 @@
         }
     }
 
-    private bool validateLogin(LoginModel loginModel)
+    private bool validateLogin(LoginIn loginModel)
     {
         try
         {

@@ -22,14 +22,14 @@ namespace ContractSystem.Repositories
                         .ToList();
         }
 
-        public UserDTO? GetById(int id)
+        public UserDTO GetById(int id)
         {
             return _dataContext.Users
                         .Include(u => u.Documents)
                         .Include(u => u.Approvals)
                         .Include(u => u.LoginData)
                         .Where(u => u.Id == id)
-                        .FirstOrDefault();
+                        .Single();
         }
 
         public UserDTO? GetByLogin(string login)
