@@ -1,13 +1,27 @@
-﻿<div class="card" style="width: 18rem;" >
-    <div class="card-body">
-        <h5 class="card-title">@Document.Index</h5>
-        <h6 class="card-subtitle mb-2 text-muted">Id: @Document.Id</h6>
-        <p class="card-text">@Document.Content <br /> Согласован: @Document.IsApproved</p>
-        <a href="#" class="card-link">Согласования</a>
-        <a href="#" class="card-link">Владелец</a>
-    </div>
-    <div class="card-footer">
-        <a href="/document/@Document.Id" class="card-link">Подробнее</a>
+﻿<div class="col">
+    <div class="card ">
+        <div class="card-body">
+            <h5 class="card-title">@Document.Index</h5>
+            <h6 class="card-subtitle mb-2 text-muted">
+                @if (Document.IsApproved)
+                {
+                    @("Согласован")
+                    ;
+                }
+                else
+                {
+                    @("Не согласован")
+                }
+            </h6>
+            <p class="card-text">@Document.Content</p>
+        </div>
+        <div class="card-footer">
+            <div class="btn-group w-100" role="group" aria-label="Basic outlined">
+                <a href="/document/@Document.Id" type="button" class="btn btn-outline-dark">Подробнее</a>
+                <a href="/user/@Document.OwnerId" type="button" class="btn btn-outline-dark">Владелец</a>
+                <a href="" type="button" class="btn btn-outline-dark">Согласования</a>
+            </div>
+        </div>
     </div>
 </div>
 
