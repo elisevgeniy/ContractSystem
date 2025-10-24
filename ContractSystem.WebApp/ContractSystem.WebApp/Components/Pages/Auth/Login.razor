@@ -1,11 +1,10 @@
 ﻿@page "/login"
-@layout Components.Layout.EmptyLayout
 @using System.Security.Claims
 @using ContractSystem.Core.Exceptions
 
 
-<div class="row align-items-center justify-content-center min-vh-100">
-    <div class="col-4">
+<div class="row justify-content-center min-vh-100">
+    <div class="col-6">
         <h1 class="mb-3 fw-normal text-center">Авторизация</h1>
         <EditForm Model="loginModel" OnValidSubmit="StartLogin" FormName="Login">
             <DataAnnotationsValidator />
