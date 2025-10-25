@@ -14,7 +14,7 @@ namespace ContractSystem.Core.IRepositories
 
         public List<DocumentDTO> GetAllByUser(int userId);
 
-        public DocumentDTO? GetById(int id);
+        public DocumentDTO GetById(int id);
 
         public DocumentDTO Add(DocumentDTO documentDTO);
 

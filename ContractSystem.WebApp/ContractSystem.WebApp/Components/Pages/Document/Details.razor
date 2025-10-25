@@ -1,7 +1,8 @@
 ﻿@page "/document/{Id:int}"
-@attribute [Authorize];
+@rendermode InteractiveServer
+@attribute [Authorize]
 
-<h3>Документ @document.Index</h3>
+<h3>Документ "@document.Index"</h3>
 
 <table class="table table-striped">
 <thead>
@@ -50,6 +51,7 @@
     </tr>
 </tbody>
 </table>
+<button class="btn btn-danger" @onclick="OnDelete">Удалить</button>
 
 
 @code {
@@ -59,6 +61,9 @@
     [Inject]
     DocumentService documentService { get; set; }
 
+    [Inject]
+    NavigationManager navigationManager { get; set; }
+
     [CascadingParameter]
     HttpContext httpContext { get; set; }
 
@@ -66,14 +71,28 @@
 
     protected override void OnInitialized()
     {
-        AuthedUser authedUser = httpContext.User.Adapt<AuthedUser>();
+        if (httpContext != null)
+        {
+            AuthedUser authedUser = httpContext.User.Adapt<AuthedUser>();
+            if (authedUser.Role != Role.Admin && authedUser.Id != Id) httpContext.Response.Redirect("/");
+        }
 
-        if (authedUser.Role != Role.Admin && authedUser.Id != Id) httpContext.Response.Redirect("/");
-        
         document = documentService.GetById(Id);
         if (document == null)
         {
             httpContext.Response.Redirect("/");
         }
+    }
+
+    public void OnDelete()
+    {
+        try
+        {
+            documentService.Delete(Id);
+            navigationManager.NavigateTo("/");
+        } catch (NotFoundException ex)
+        {
+            navigationManager.NavigateTo("/");
+        } 
     }
 }   

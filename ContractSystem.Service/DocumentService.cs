@@ -66,5 +66,10 @@ namespace ContractSystem.Service
             approvalDTO.ApprovalDate = new DateTime();
             _approvalRepository.Update(approvalDTO);
         }
+        public void Delete(int documentId)
+        {
+            var docDTO = _documentRepository.GetById(documentId);
+            _documentRepository.Delete(docDTO);
+        }
     }
 }

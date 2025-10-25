@@ -42,7 +42,7 @@ namespace ContractSystem.Repositories
                                 .Include(d => d.Owner)
                                 .Include(d => d.Approvals)
                                 .Where(d => d.Id == id)
-                                .FirstOrDefault();
+                                .Single();
         }
 
         public DocumentDTO Add(DocumentDTO documentDTO)
