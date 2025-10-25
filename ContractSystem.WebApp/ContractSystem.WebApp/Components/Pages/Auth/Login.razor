@@ -6,21 +6,21 @@
 <div class="row justify-content-center min-vh-100">
     <div class="col-md-6 col-lg-4">
         <h1 class="mb-3 fw-normal text-center">Авторизация</h1>
-        <EditForm Model="loginModel" OnValidSubmit="StartLogin" FormName="Login">
+        <EditForm Model="loginIn" OnValidSubmit="StartLogin" FormName="Login">
             <DataAnnotationsValidator />
 
             <!-- Email input -->
             <div class="form-floating mb-3">
-                <InputText @bind-Value="loginModel.Login" id="loginInput" class="form-control" placeholder></InputText>
+                <InputText @bind-Value="loginIn.Login" id="loginInput" class="form-control" placeholder></InputText>
                 <label for="loginInput">Логин</label>
-                <ValidationMessage For="@(() => loginModel.Login)" />
+                <ValidationMessage For="@(() => loginIn.Login)" />
             </div>
 
             <!-- Password input -->
             <div class="form-floating mb-3">
-                <InputText @bind-Value="loginModel.Password" type="password" id="passwordInput" class="form-control" placeholder></InputText>
+                <InputText @bind-Value="loginIn.Password" type="password" id="passwordInput" class="form-control" placeholder></InputText>
                 <label class="form-label" for="passwordInput">Пароль</label>
-                <ValidationMessage For="@(() => loginModel.Password)" />
+                <ValidationMessage For="@(() => loginIn.Password)" />
             </div>
             <!-- Section: Design Block -->
 
@@ -42,7 +42,7 @@
     public HttpContext httpContext { get; set; }
 
     [SupplyParameterFromForm]
-    public LoginIn loginModel { get; set; } = new LoginIn();
+    public LoginIn loginIn { get; set; } = new LoginIn();
 
     [SupplyParameterFromQuery]
     public string ReturnUrl { get; set; } = "/";
@@ -69,13 +69,15 @@
     public async void StartLogin()
     {
         //Идем в базу проверяться и тд
-        if (validateLogin(loginModel))
+        if (validateLogin(loginIn))
         {
             loginFail = false;
+            var user = userService.getByLogin(loginIn.Login);
             var claims = new List<Claim>()
             {
-                new Claim("Name", loginModel.Login),
-                new Claim(ClaimTypes.Role, "Prezenent")
+                new Claim(ClaimTypes.Sid, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Name.ToString()),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

@@ -1,13 +1,16 @@
 using Blazored.Toast;
 using ContractSystem.Core;
 using ContractSystem.Core.IRepositories;
+using ContractSystem.Core.Models;
 using ContractSystem.Repositories;
 using ContractSystem.Service;
 using ContractSystem.WebApp.Client.Pages;
 using ContractSystem.WebApp.Components;
+using ContractSystem.WebApp.Components.Models;
 using Mapster;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace ContractSystem.WebApp
 {
@@ -37,6 +40,11 @@ namespace ContractSystem.WebApp
 
 
             TypeAdapterConfig.GlobalSettings.Apply(new MapsterConfig());
+            TypeAdapterConfig.GlobalSettings.NewConfig<ClaimsPrincipal, AuthedUser>()
+                .Map(au => au.Id, cp => cp.Claims.Where(cl => cl.Type.Equals(ClaimTypes.Sid)).First().Value)
+                .Map(au => au.Name, cp => cp.Claims.Where(cl => cl.Type.Equals(ClaimTypes.Name)).First().Value)
+                .Map(au => au.Role, cp => Enum.Parse<Role>(cp.Claims.Where(cl => cl.Type.Equals(ClaimTypes.Role)).First().Value))
+                ;
             builder.Services.AddMapster();
 
             builder.Services.AddDbContext<DataContext>();

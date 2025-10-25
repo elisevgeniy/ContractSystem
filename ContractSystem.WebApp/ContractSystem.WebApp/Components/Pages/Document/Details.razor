@@ -1,20 +1,56 @@
 ﻿@page "/document/{Id:int}"
 @attribute [Authorize];
 
-<h3>Документ</h3>
-<label>Номер договора</label>
-<p>@document.Index</p>
-<label>Содержание</label>
-<p>@document.Content</p>
-<label>Владелец</label>
-<UserCard User="document.Owner" />
-<label>Согласование:</label>
-<div>
-    @foreach(var approval in document.Approvals)
-    {
-        <UserCard User="approval.User" />
-    }
-</div>
+<h3>Документ @document.Index</h3>
+
+<table class="table table-striped">
+<thead>
+   <tr>
+       <th class="col-2">Параметр</th>
+       <th>Значение</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>Уникальный номер документа</td>
+        <td>@document.Index</td>
+    </tr>
+    <tr>
+        <td>Содержание</td>
+        <td>@document.Content</td>
+    </tr>
+    <tr>
+        <td>Статус</td>
+        <td>
+            @if (document.IsApproved)
+                {
+                    @("Согласован")
+                    ;
+                }
+                else
+                {
+                    @("Не согласован")
+                }
+        </td>
+    </tr>
+    <tr>
+        <td>Владелец</td>
+        <td>
+            <a href="/user/@document.OwnerId">@document.Owner.Name</a>
+        </td>
+    </tr>
+    <tr>
+        <td>Согласующие лица</td>
+        <td>
+            @foreach(var approval in document.Approvals)
+            {
+            <a href="/user/@approval.UserId">@approval.User.Name</a>
+            }
+        </td>
+    </tr>
+</tbody>
+</table>
+
 
 @code {
     [Parameter]
@@ -30,6 +66,10 @@
 
     protected override void OnInitialized()
     {
+        AuthedUser authedUser = httpContext.User.Adapt<AuthedUser>();
+
+        if (authedUser.Role != Role.Admin && authedUser.Id != Id) httpContext.Response.Redirect("/");
+        
         document = documentService.GetById(Id);
         if (document == null)
         {
