@@ -50,7 +50,18 @@ namespace ContractSystem.Service
 
             var docDTO = documentIn.Adapt<DocumentDTO>();
             docDTO = _documentRepository.Add(docDTO);
-            return docDTO.Adapt<DocumentOut>(); // TODO: Разобраться, почему падает Mapster
+            return docDTO.Adapt<DocumentOut>();
+        }
+        public DocumentOut Update(DocumentUpdateIn document)
+        {
+            var user = _userService.getById(document.OwnerId);
+
+            var docDTO = _documentRepository.GetById(document.Id);
+            docDTO.Index = document.Index;
+            docDTO.Content = document.Content;
+            
+            docDTO = _documentRepository.Update(docDTO);
+            return docDTO.Adapt<DocumentOut>();
         }
         public void Approve(ApprovalIn approvalIn)
         {

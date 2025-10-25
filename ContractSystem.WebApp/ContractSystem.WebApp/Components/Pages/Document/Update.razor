@@ -1,0 +1,72 @@
+﻿@page "/document/{Id:int}/update"
+@rendermode InteractiveServer
+
+<PageTitle>Изменение договора</PageTitle>
+
+<EditForm Model="documentUpdate" OnValidSubmit="UpdateAddModal">
+    <DataAnnotationsValidator />
+    <h2>Добавление договора</h2>
+    <div class="mb-3">
+        <label class="form-label">Номер договора</label>
+        <InputText class="form-control" @bind-Value="documentUpdate.Index" />
+        <ValidationMessage For="@(() => documentUpdate.Index)" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Содержание договора</label>
+        <InputTextArea class="form-control" @bind-Value="documentUpdate.Content" />
+        <ValidationMessage For="@(() => documentUpdate.Content)" />
+    </div>
+    <a type="button" class="btn btn-secondary" href="/document">Отмена</a>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    [CascadingParameter]
+    HttpContext httpContext { get; set; }
+    [Inject]
+    NavigationManager navigationManager { get; set; }
+    [Inject]
+    AuthenticationStateProvider authenticationStateProvider { get; set; }
+
+    [Inject]
+    public DocumentService documentService { get; set; }
+    [Inject]
+    public UserService userService { get; set; }
+
+    AuthedUser authedUser = null;
+
+
+    public DocumentUpdateIn documentUpdate;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+            authedUser = authState.User.Adapt<AuthedUser>();
+            if (authedUser.Role != Role.Admin && authedUser.Id != Id)
+                httpContext.Response.Redirect("/");
+
+            documentUpdate = documentService.GetById(Id).Adapt <DocumentUpdateIn>();
+            if (documentUpdate.OwnerId != authedUser.Id)
+            {
+                if (httpContext != null)
+                    httpContext.Response.Redirect("404");
+                else
+                    navigationManager.NavigateTo("404");
+            }
+        }
+        catch
+        {
+            navigationManager.NavigateTo("404");
+        }
+    }
+
+    protected void UpdateAddModal()
+    {
+        documentService.Update(documentUpdate);
+        navigationManager.NavigateTo($"/document/{Id}");
+    }
+}
