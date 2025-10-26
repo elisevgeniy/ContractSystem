@@ -8,23 +8,66 @@
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="user">
-                <span      class="bi bi-people-fill-nav-menu" aria-hidden="true"></span> Пользователи
-            </NavLink>
-        </div>
+        <AuthorizeView Roles="Admin">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/user">
+                    Пользователи
+                </NavLink>
+            </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="document">
-                <i class="bi bi-journals" aria-hidden="true"></i> Документы
-            </NavLink>
-        </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/document">
+                    Документы
+                </NavLink>
+            </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="approval">
-                <i class="bi bi-journals" aria-hidden="true"></i> Согласование
-            </NavLink>
-        </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/approval">
+                    Согласование
+                </NavLink>
+            </div>
+        </AuthorizeView>
+        
+        <AuthorizeView Roles="User">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="@($"/user/{authedUser.Id}")">
+                    Профиль
+                </NavLink>
+            </div>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="@($"/user/{authedUser.Id}/document")">
+                    Мои документы
+                </NavLink>
+            </div>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="@($"/user/{authedUser.Id}/approval")">
+                    Запросы на согласование
+                </NavLink>
+            </div>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/document">
+                    Все документы
+                </NavLink>
+            </div>
+        </AuthorizeView>
     </nav>
 </div>
 
+@code {
+    [Inject]
+    AuthenticationStateProvider authenticationStateProvider { get; set; }
+
+    AuthedUser authedUser { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity?.IsAuthenticated == true)
+        {
+            authedUser = authState.User.Adapt<AuthedUser>();
+        }
+    }
+}

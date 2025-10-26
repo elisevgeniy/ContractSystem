@@ -24,10 +24,28 @@
     [Inject]
     public UserService userService { get; set; }
 
+    [Inject]
+    AuthenticationStateProvider authenticationStateProvider { get; set; }
+
+    [CascadingParameter]
+    HttpContext httpContext { get; set; }
+
+    private AuthedUser authedUser { get; set; }
+
     List<UserOut> users = new ();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity?.IsAuthenticated == true)
+        {
+            authedUser = authState.User.Adapt<AuthedUser>();
+        }
+        if (authedUser.Role != Role.Admin)
+        {
+            httpContext.Response.Redirect("/403");
+        }
+
         users= userService.getAll();
     }
 }
