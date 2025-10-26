@@ -7,6 +7,7 @@ using ContractSystem.Core.Models.Out;
 using ContractSystem.Core.Models.Search;
 using ContractSystem.Repositories;
 using Mapster;
+using System.Linq;
 
 namespace ContractSystem.Service
 {
@@ -65,6 +66,29 @@ namespace ContractSystem.Service
             var docDTO = _documentRepository.GetById(document.Id);
             docDTO.Index = document.Index;
             docDTO.Content = document.Content;
+
+            List<ApprovalDTO> toRemove = new();
+
+            foreach(var appr in docDTO.Approvals)
+            {
+                if (!document.ApprovalUsers.Contains(appr.User.Adapt<UserOut>()))
+                {
+                    toRemove.Add(appr);
+                }
+            }
+            docDTO.Approvals.RemoveAll(a => toRemove.Contains(a));
+
+            foreach(var apprUser in document.ApprovalUsers)
+            {
+                if (docDTO.Approvals.Find(a => a.UserId == apprUser.Id) == null)
+                {
+                    docDTO.Approvals.Add(new ApprovalDTO()
+                    {
+                        DocumentId = document.Id,
+                        UserId = apprUser.Id,
+                    });
+                }
+            }
             
             docDTO = _documentRepository.Update(docDTO);
             return docDTO.Adapt<DocumentOut>();

@@ -22,7 +22,7 @@ namespace ContractSystem.Core.Models.In
         public int OwnerId { get; set; }
         public bool IsApproved { get; set; }
 
-        public List<ApprovalOut> Approvals { get; set; }
+        public HashSet<UserOut> ApprovalUsers { get; set; } = new();
         public UserOut Owner { get; set; }
     }
 }

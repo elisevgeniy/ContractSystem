@@ -44,9 +44,9 @@
         <tr>
             <td>Согласующие лица</td>
             <td>
-                @foreach(var approval in document.Approvals)
+                    @foreach (var approval in documentApprovals)
                 {
-                <a href="/user/@approval.UserId">@approval.User.Name</a>
+                <a class="mt-1" href="/user/@approval.UserId">@approval.User.Name</a><br />
                 }
             </td>
         </tr>
@@ -69,6 +69,9 @@
     DocumentService documentService { get; set; }
 
     [Inject]
+    ApprovalService approvalService { get; set; }
+
+    [Inject]
     NavigationManager navigationManager { get; set; }
 
     [Inject]
@@ -80,6 +83,7 @@
     private AuthedUser authedUser { get; set; }
 
     private DocumentOut document;
+    private List<ApprovalOut> documentApprovals;
 
     protected override async Task OnInitializedAsync()
     {
@@ -93,6 +97,7 @@
         try 
         {
             var doc = documentService.GetById(Id);
+            documentApprovals = approvalService.GetAllByDocument(doc.Id);
             if (authedUser.Role != Role.Admin && authedUser.Id != doc.OwnerId) httpContext.Response.Redirect("/403");
             document = doc;
         } catch (NotFoundException e){

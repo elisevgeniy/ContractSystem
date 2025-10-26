@@ -1,11 +1,14 @@
 ﻿@page "/document/{Id:int}/update"
+@using SimpleBlazorMultiselect
 @rendermode InteractiveServer
 
 <PageTitle>Изменение договора</PageTitle>
 
-<EditForm Model="documentUpdate" OnValidSubmit="UpdateAddModal">
+<EditForm Model="documentUpdate" OnValidSubmit="UpdateDoc">
     <DataAnnotationsValidator />
     <h2>Добавление договора</h2>
+    <a type="button" class="btn btn-secondary" href="/document">Отмена</a>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
     <div class="mb-3">
         <label class="form-label">Номер договора</label>
         <InputText class="form-control" @bind-Value="documentUpdate.Index" />
@@ -16,8 +19,13 @@
         <InputTextArea class="form-control" @bind-Value="documentUpdate.Content" />
         <ValidationMessage For="@(() => documentUpdate.Content)" />
     </div>
-    <a type="button" class="btn btn-secondary" href="/document">Отмена</a>
-    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <div class="mb-3">
+        <label class="form-label">Согласующие</label>
+        <SimpleMultiselect Options="userList"
+                           StringSelector="(item => item.Name)"
+                           @bind-SelectedOptions="documentUpdate.ApprovalUsers"
+                           CanFilter="true" />
+    </div>
 </EditForm>
 
 @code {
@@ -37,6 +45,7 @@
     public UserService userService { get; set; }
 
     AuthedUser authedUser = null;
+    List<UserOut> userList;
 
 
     public DocumentUpdateIn documentUpdate;
@@ -46,17 +55,16 @@
         {
             var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
             authedUser = authState.User.Adapt<AuthedUser>();
-            if (authedUser.Role != Role.Admin && authedUser.Id != Id)
-                httpContext.Response.Redirect("/403");
 
-            documentUpdate = documentService.GetById(Id).Adapt <DocumentUpdateIn>();
-            if (documentUpdate.OwnerId != authedUser.Id)
+            documentUpdate = documentService.GetById(Id).Adapt<DocumentUpdateIn>();
+            if (authedUser.Role != Role.Admin && documentUpdate.OwnerId != authedUser.Id)
             {
                 if (httpContext != null)
-                    httpContext.Response.Redirect("/404");
+                    httpContext.Response.Redirect("/403");
                 else
-                    navigationManager.NavigateTo("/404");
+                    navigationManager.NavigateTo("/403");
             }
+            userList = userService.getAll();
         }
         catch
         {
@@ -64,7 +72,7 @@
         }
     }
 
-    protected void UpdateAddModal()
+    protected void UpdateDoc()
     {
         documentService.Update(documentUpdate);
         navigationManager.NavigateTo($"/document/{Id}");
