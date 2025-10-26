@@ -85,6 +85,12 @@ namespace ContractSystem.Service
             return userDTO.LoginData.Password.Equals(loginIn.Password);
         }
 
+        public void Delete(int documentId)
+        {
+            var docDTO = _userRepository.GetById(documentId);
+            _userRepository.Delete(docDTO);
+        }
+
         private static void InicializeUser(UserDTO userDTO)
         {
             for (int i = 0; i < 4; i++)

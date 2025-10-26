@@ -1,13 +1,43 @@
 ﻿@page "/user/{Id:int}"
+@rendermode InteractiveServer
 @attribute [Authorize];
 
 @if (user != null)
 {
-    <h3>Пользователь</h3>
-    <label>Логин</label>
-    <p>@user!.Login</p>
-    <label>Имя</label>
-    <p>@user!.Name</p>
+    <h3>Пользователь "@user.Login"</h3>
+
+    <table class="table table-striped">
+    <thead>
+       <tr>
+           <th class="col-2">Параметр</th>
+           <th>Значение</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Логин</td>
+            <td>@user.Login</td>
+        </tr>
+        <tr>
+            <td>Имя</td>
+            <td>@user.Name</td>
+        </tr>
+        <tr>
+            <td>Роль</td>
+            <td>
+                @user.Role.ToString();
+            </td>
+        </tr>
+    </tbody>
+    </table>
+    <div class="mt-3">
+        <a class="btn btn-secondary" href="/user/@Id/update">Изменить</a>
+        <button class="btn btn-danger" @onclick="OnDelete">Удалить</button>
+    </div>
+    <div class="mt-3">
+        <a class="btn btn-outline-secondary" href="/user/@Id/document">Документы пользователя</a>
+        <a class="btn btn-outline-secondary" href="/user/@Id/approval">Документы на согласовании</a>
+    </div>
 }
 
 @code {
@@ -16,6 +46,9 @@
 
     [Inject]
     UserService userService { get; set; }
+
+    [Inject]
+    NavigationManager navigationManager { get; set; }
 
     [Inject]
     AuthenticationStateProvider authenticationStateProvider { get; set; }
@@ -42,5 +75,17 @@
         } catch (NotFoundException ex) {
             httpContext.Response.Redirect("/404");
         }
+    }
+
+    public void OnDelete()
+    {
+        try
+        {
+            userService.Delete(Id);
+            navigationManager.NavigateTo("/document");
+        } catch (NotFoundException ex)
+        {
+            navigationManager.NavigateTo("/404");
+        } 
     }
 }
