@@ -52,16 +52,16 @@ namespace ContractSystem.Service
             UserDTO? userDTO = _userRepository.GetByLogin(userIn.Login);
             if (userDTO != null) throw new Exception("Такой пользователь уже существует");
 
-            userDTO = new UserDTO()
-            {
-                Login = userIn.Login,
-                Name = userIn.Name,
-                Role = userIn.Role,
-                LoginData = new LoginDTO()
-                {
-                    Password = userIn.Password,
-                }
-            };
+            userDTO = userIn.Adapt<UserDTO>();
+            //{
+            //    Login = userIn.Login,
+            //    Name = userIn.Name,
+            //    Role = userIn.Role,
+            //    LoginData = new LoginDTO()
+            //    {
+            //        Password = userIn.Password,
+            //    }
+            //};
             InicializeUser(userDTO);
             userDTO = _userRepository.Add(userDTO);
 
