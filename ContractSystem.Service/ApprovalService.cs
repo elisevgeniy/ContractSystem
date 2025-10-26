@@ -1,5 +1,6 @@
 ﻿using ContractSystem.Core.DTO;
 using ContractSystem.Core.IRepositories;
+using ContractSystem.Core.Models.In;
 using ContractSystem.Core.Models.Out;
 using Mapster;
 using System;
@@ -37,6 +38,25 @@ namespace ContractSystem.Service
         public List<ApprovalOut> GetAllByUser(int userId)
         {
             return _approvalRepository.GetAllByUser(userId).Adapt<List<ApprovalOut>>();
+        }
+
+        public List<ApprovalOut> GetAllByDocument(int documentId)
+        {
+            return _approvalRepository.GetAllByDocument(documentId).Adapt<List<ApprovalOut>>();
+        }
+        public void Approve(ApprovalIn approvalIn)
+        {
+            ApprovalDTO approvalDTO = _approvalRepository.GetAllByUser(approvalIn.UserId).Where(a => a.DocumentId == approvalIn.DocumentId).FirstOrDefault();
+            approvalDTO.IsApproved = approvalIn.IsApproved;
+            _approvalRepository.Update(approvalDTO);
+        }
+        public ApprovalOut Approve(int approvalId)
+        {
+            ApprovalDTO? approvalDTO = _approvalRepository.GetById(approvalId);
+            if (approvalDTO == null) throw new Exception("Согласование не найдено");
+            approvalDTO.IsApproved = true;
+            approvalDTO.ApprovalDate = DateTime.UtcNow;
+            return _approvalRepository.Update(approvalDTO).Adapt<ApprovalOut>();
         }
     }
 }

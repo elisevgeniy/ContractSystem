@@ -52,8 +52,13 @@
         </tr>
     </tbody>
     </table>
-    <a class="btn btn-secondary" href="/document/@document.Id/update">Изменить</a>
-    <button class="btn btn-danger" @onclick="OnDelete">Удалить</button>
+    <div class="mt-3">
+        <a class="btn btn-secondary" href="/document/@document.Id/update">Изменить</a>
+        <button class="btn btn-danger" @onclick="OnDelete">Удалить</button>
+    </div>
+    <div class="mt-3">
+        <a class="btn btn-secondary" href="/document/@document.Id/approval">Согласования</a>
+    </div>
 }
 
 @code {

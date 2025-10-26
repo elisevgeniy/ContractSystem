@@ -69,20 +69,6 @@ namespace ContractSystem.Service
             docDTO = _documentRepository.Update(docDTO);
             return docDTO.Adapt<DocumentOut>();
         }
-        public void Approve(ApprovalIn approvalIn)
-        {
-            ApprovalDTO approvalDTO = _approvalRepository.GetAllByUser(approvalIn.UserId).Where(a => a.DocumentId == approvalIn.DocumentId).FirstOrDefault();
-            approvalDTO.IsApproved = approvalIn.IsApproved;
-            _approvalRepository.Update(approvalDTO);
-        }
-        public void Approve(int approvalId)
-        {
-            ApprovalDTO? approvalDTO = _approvalRepository.GetById(approvalId);
-            if (approvalDTO == null) throw new Exception("Согласование не найдено");
-            approvalDTO.IsApproved = true;
-            approvalDTO.ApprovalDate = new DateTime();
-            _approvalRepository.Update(approvalDTO);
-        }
         public void Delete(int documentId)
         {
             var docDTO = _documentRepository.GetById(documentId);

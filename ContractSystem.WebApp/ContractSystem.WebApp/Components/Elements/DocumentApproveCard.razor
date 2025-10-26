@@ -1,12 +1,36 @@
-﻿<div class="card" style="width: 18rem;" >
-    <div class="card-body">
-        <h5 class="card-title">@Approval.Document.Index</h5>
-        <h6 class="card-subtitle mb-2 text-muted">Id: @Approval.Id</h6>
-        <p class="card-text">@Approval.Document.Content <br /> Согласован: @Approval.IsApproved</p>
-        <a href="#" class="card-link">Владелец</a>
-    </div>
-    <div class="card-footer">
-        <button class="btn btn-primary" type="submit" @onclick="OnApprove">Согласовать</button>
+﻿<div class="col">
+    <div class="card border-2 @((Approval.IsApproved) ? "border-success" : "border-warning")">
+        <div class="card-body">
+            <h5 class="card-title">@Approval.Document.Index</h5>
+            <h6 class="card-subtitle mb-2 text-muted">
+                @if (Approval.IsApproved)
+                {
+                    @($"Согласовано {Approval.ApprovalDate!.Value.ToString("dd.MM.yy HH:mm")}")
+                    ;
+                }
+                else
+                {
+                    @("Ещё не согласовано")
+                }
+            </h6>
+            <p class="card-text">Согласует @Approval.User.Name</p>
+        </div>
+        <div class="card-footer">
+            <div class="btn-group w-100" role="group" aria-label="Basic outlined">
+                <a href="/document/@Approval.Document.Id" type="button" class="btn btn-outline-dark">Подробнее</a>
+                <a href="/user/@Approval.Document.OwnerId" type="button" class="btn btn-outline-dark">Владелец</a>
+                @if (!Approval.IsApproved)
+                {
+                    if (Approval.UserId == authedUser.Id)
+                    {
+                        <button class="btn btn-primary" type="submit" @onclick="OnApprove">Согласовать</button>
+                    }
+                } else
+                {
+                    <div class="btn btn-outline-secondary">Согласовано</div>
+                }
+            </div>
+        </div>
     </div>
 </div>
 
@@ -15,6 +39,25 @@
     public ApprovalOut Approval { get; set; }
     [Parameter]
     public Action<ApproveDocumentModel> Approve { get; set; }
+
+    [Inject]
+    AuthenticationStateProvider authenticationStateProvider { get; set; }
+
+    [CascadingParameter]
+    HttpContext httpContext { get; set; }
+
+    private AuthedUser authedUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity?.IsAuthenticated == true)
+        {
+            authedUser = authState.User.Adapt<AuthedUser>();
+            if (authedUser.Role != Role.Admin && authedUser.Id != Approval.UserId && authedUser.Id != Approval.Document.OwnerId) httpContext.Response.Redirect("/403");
+        }
+    }
+
 
     void OnApprove()
     {
