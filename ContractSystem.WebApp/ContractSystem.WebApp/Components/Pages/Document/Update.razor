@@ -7,8 +7,6 @@
 <EditForm Model="documentUpdate" OnValidSubmit="UpdateDoc">
     <DataAnnotationsValidator />
     <h2>Добавление договора</h2>
-    <a type="button" class="btn btn-secondary" href="/document">Отмена</a>
-    <button type="submit" class="btn btn-primary">Сохранить</button>
     <div class="mb-3">
         <label class="form-label">Номер договора</label>
         <InputText class="form-control" @bind-Value="documentUpdate.Index" />
@@ -22,9 +20,13 @@
     <div class="mb-3">
         <label class="form-label">Согласующие</label>
         <SimpleMultiselect Options="userList"
-                           StringSelector="(item => item.Name)"
+                           StringSelector="(item => item?.Name)"
                            @bind-SelectedOptions="documentUpdate.ApprovalUsers"
                            CanFilter="true" />
+    </div>
+    <div class="mb-3">
+        <a type="button" class="btn btn-secondary" href="/document">Отмена</a>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
     </div>
 </EditForm>
 
@@ -45,7 +47,7 @@
     public UserService userService { get; set; }
 
     AuthedUser authedUser = null;
-    List<UserOut> userList;
+    List<UserOut> userList = new();
 
 
     public DocumentUpdateIn documentUpdate;
