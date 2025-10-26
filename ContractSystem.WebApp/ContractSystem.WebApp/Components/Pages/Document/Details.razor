@@ -65,18 +65,25 @@
     [Inject]
     NavigationManager navigationManager { get; set; }
 
+    [Inject]
+    AuthenticationStateProvider authenticationStateProvider { get; set; }
+
     [CascadingParameter]
     HttpContext httpContext { get; set; }
 
+    private AuthedUser authedUser { get; set; }
+
     private DocumentOut document;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        if (httpContext != null)
+
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity?.IsAuthenticated == true)
         {
-            AuthedUser authedUser = httpContext.User.Adapt<AuthedUser>();
-            if (authedUser.Role != Role.Admin && authedUser.Id != Id) httpContext.Response.Redirect("/");
+            authedUser = authState.User.Adapt<AuthedUser>();
         }
+        if (authedUser.Role != Role.Admin && authedUser.Id != Id) httpContext.Response.Redirect("/");
 
         document = documentService.GetById(Id);
         if (document == null)
