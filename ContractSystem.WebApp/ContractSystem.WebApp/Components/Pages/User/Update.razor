@@ -1,0 +1,102 @@
+﻿@page "/user/{Id:int}/update"
+@rendermode InteractiveServer
+
+<PageTitle>Изменение пользователя</PageTitle>
+
+<EditForm Model="userUpdate" OnValidSubmit="UpdateUser">
+    <DataAnnotationsValidator />
+    <h2>Изменение пользователя</h2>
+    <div class="mb-3">
+        <label class="form-label">Логин</label>
+        <InputText class="form-control" @bind-Value="userUpdate.Login" />
+        <ValidationMessage For="@(() => userUpdate.Login)" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Имя</label>
+        <InputTextArea class="form-control" @bind-Value="userUpdate.Name" />
+        <ValidationMessage For="@(() => userUpdate.Name)" />
+    </div>
+    <AuthorizeView Roles="Admin" Context="AdminContext">
+        <div class="mb-3">
+            <label class="form-label">Роль</label>
+            <InputSelect class="form-control" @bind-Value="userUpdate.Role" >
+                @foreach (var roleVal in Enum.GetValues<Role>())
+                {
+                    <option value="@roleVal">@(Enum.GetName<Role>(roleVal))</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => userUpdate.Name)" />
+        </div>
+    </AuthorizeView>
+    <div class="mb-3">
+        <label class="form-label">Старый пароль</label>
+        <InputText type="password" class="form-control" @bind-Value="userUpdate.OldPassword" />
+        <ValidationMessage For="@(() => userUpdate.OldPassword)" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Пароль</label>
+        <InputText type="password" class="form-control" @bind-Value="userUpdate.Password" />
+        <ValidationMessage For="@(() => userUpdate.Password)" />
+    </div>
+    <a type="button" class="btn btn-secondary" href="/user">Отмена</a>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+
+    @if (showError)
+    {
+        <div class="alert alert-danger mt-3" role="alert">
+            @errorText
+        </div>
+    }
+</EditForm>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    [CascadingParameter]
+    HttpContext httpContext { get; set; }
+    [Inject]
+    NavigationManager navigationManager { get; set; }
+    [Inject]
+    AuthenticationStateProvider authenticationStateProvider { get; set; }
+
+    [Inject]
+    public UserService userService { get; set; }
+
+    AuthedUser authedUser = null;
+    bool showError = false;
+    string errorText = "";
+
+
+    public UserUpdateIn userUpdate;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+            authedUser = authState.User.Adapt<AuthedUser>();
+            if (authedUser.Role != Role.Admin && authedUser.Id != Id)
+                httpContext.Response.Redirect("/403");
+
+            userUpdate = userService.getById(Id).Adapt<UserUpdateIn>();
+        }
+        catch
+        {
+            navigationManager.NavigateTo("/404");
+        }
+    }
+
+    protected void UpdateUser()
+    {
+        try
+        {
+            userService.Update(userUpdate);
+            navigationManager.NavigateTo($"/user/{Id}");
+        }
+        catch (Exception e)
+        {
+            showError = true;
+            errorText = e.Message;
+        }
+    }
+}

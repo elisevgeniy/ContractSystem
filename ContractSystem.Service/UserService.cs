@@ -6,6 +6,7 @@ using ContractSystem.Core.Models.In;
 using ContractSystem.Core.Models.Out;
 using ContractSystem.Repositories;
 using Mapster;
+using System.Reflection.Metadata;
 
 namespace ContractSystem.Service
 {
@@ -83,6 +84,27 @@ namespace ContractSystem.Service
             UserDTO? userDTO = _userRepository.GetByLogin(loginIn.Login);
             if (userDTO == null) throw new NotFoundException();
             return userDTO.LoginData.Password.Equals(loginIn.Password);
+        }
+
+        public UserOut Update(UserUpdateIn userIn)
+        {
+            var userDTO = _userRepository.GetById(userIn.Id);
+
+            userDTO.Login = userIn.Login;
+            userDTO.Name = userIn.Name;
+            userDTO.Role = userIn.Role;
+            if (userIn.OldPassword != null)
+            {
+                if (!userDTO.LoginData.Password.Equals(userIn.OldPassword))
+                    throw new Exception("Старый пароль не правильный");
+                userDTO.LoginData.Password = userIn.Password;
+            } else if (userIn.Password != null)
+            {
+                throw new Exception("Старый пароль не указан");
+            }
+                userDTO = _userRepository.Update(userDTO);
+            return userDTO.Adapt<UserOut>();
+
         }
 
         public void Delete(int documentId)
