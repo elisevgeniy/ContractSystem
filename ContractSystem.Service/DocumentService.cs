@@ -24,8 +24,14 @@ namespace ContractSystem.Service
         }
         public DocumentOut GetById(int id)
         {
-            var docDTO = _documentRepository.GetById(id);
-            return docDTO.Adapt<DocumentOut>();
+            try
+            {
+                var docDTO = _documentRepository.GetById(id);
+                return docDTO.Adapt<DocumentOut>();
+            } catch (Exception e)
+            {
+                throw new NotFoundException("Документ не найден", e);
+            }
         }
         public List<DocumentOut> GetAll()
         {

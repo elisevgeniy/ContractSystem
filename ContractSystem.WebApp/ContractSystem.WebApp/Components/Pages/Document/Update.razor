@@ -47,20 +47,20 @@
             var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
             authedUser = authState.User.Adapt<AuthedUser>();
             if (authedUser.Role != Role.Admin && authedUser.Id != Id)
-                httpContext.Response.Redirect("/");
+                httpContext.Response.Redirect("/403");
 
             documentUpdate = documentService.GetById(Id).Adapt <DocumentUpdateIn>();
             if (documentUpdate.OwnerId != authedUser.Id)
             {
                 if (httpContext != null)
-                    httpContext.Response.Redirect("404");
+                    httpContext.Response.Redirect("/404");
                 else
-                    navigationManager.NavigateTo("404");
+                    navigationManager.NavigateTo("/404");
             }
         }
         catch
         {
-            navigationManager.NavigateTo("404");
+            navigationManager.NavigateTo("/404");
         }
     }
 

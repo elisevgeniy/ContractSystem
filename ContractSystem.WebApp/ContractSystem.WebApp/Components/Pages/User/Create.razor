@@ -53,7 +53,7 @@
         {
             authedUser = authState.User.Adapt<AuthedUser>();
         }
-        if (authedUser.Role != Role.Admin) navigationManager.NavigateTo("/");
+        if (authedUser.Role != Role.Admin) navigationManager.NavigateTo("/403");
 
         userNew = new();
 

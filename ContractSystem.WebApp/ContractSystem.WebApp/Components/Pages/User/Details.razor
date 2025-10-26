@@ -17,15 +17,27 @@
     [Inject]
     UserService userService { get; set; }
 
+    [Inject]
+    AuthenticationStateProvider authenticationStateProvider { get; set; }
+
     [CascadingParameter]
     HttpContext httpContext { get; set; }
 
     private UserOut user;
+    private AuthedUser authedUser;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        try
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity?.IsAuthenticated == true)
         {
+            authedUser = authState.User.Adapt<AuthedUser>();
+        }
+
+        if (authedUser.Role != Role.Admin && authedUser.Id != Id) httpContext.Response.Redirect("/403");
+
+        try
+        {          
             user = userService.getById(Id);
         } catch (NotFoundException ex) {
             httpContext.Response.Redirect("/404");

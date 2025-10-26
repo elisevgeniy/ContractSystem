@@ -2,58 +2,59 @@
 @rendermode InteractiveServer
 @attribute [Authorize]
 
-<h3>Документ "@document.Index"</h3>
+@if (document != null) {
+    <h3>Документ "@document.Index"</h3>
 
-<table class="table table-striped">
-<thead>
-   <tr>
-       <th class="col-2">Параметр</th>
-       <th>Значение</th>
-    </tr>
-</thead>
-<tbody>
-    <tr>
-        <td>Уникальный номер документа</td>
-        <td>@document.Index</td>
-    </tr>
-    <tr>
-        <td>Содержание</td>
-        <td>@document.Content</td>
-    </tr>
-    <tr>
-        <td>Статус</td>
-        <td>
-            @if (document.IsApproved)
+    <table class="table table-striped">
+    <thead>
+       <tr>
+           <th class="col-2">Параметр</th>
+           <th>Значение</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Уникальный номер документа</td>
+            <td>@document.Index</td>
+        </tr>
+        <tr>
+            <td>Содержание</td>
+            <td>@document.Content</td>
+        </tr>
+        <tr>
+            <td>Статус</td>
+            <td>
+                @if (document.IsApproved)
+                    {
+                        @("Согласован")
+                        ;
+                    }
+                    else
+                    {
+                        @("Не согласован")
+                    }
+            </td>
+        </tr>
+        <tr>
+            <td>Владелец</td>
+            <td>
+                <a href="/user/@document.OwnerId">@document.Owner.Name</a>
+            </td>
+        </tr>
+        <tr>
+            <td>Согласующие лица</td>
+            <td>
+                @foreach(var approval in document.Approvals)
                 {
-                    @("Согласован")
-                    ;
+                <a href="/user/@approval.UserId">@approval.User.Name</a>
                 }
-                else
-                {
-                    @("Не согласован")
-                }
-        </td>
-    </tr>
-    <tr>
-        <td>Владелец</td>
-        <td>
-            <a href="/user/@document.OwnerId">@document.Owner.Name</a>
-        </td>
-    </tr>
-    <tr>
-        <td>Согласующие лица</td>
-        <td>
-            @foreach(var approval in document.Approvals)
-            {
-            <a href="/user/@approval.UserId">@approval.User.Name</a>
-            }
-        </td>
-    </tr>
-</tbody>
-</table>
-<a class="btn btn-secondary" href="/document/@document.Id/update">Изменить</a>
-<button class="btn btn-danger" @onclick="OnDelete">Удалить</button>
-
+            </td>
+        </tr>
+    </tbody>
+    </table>
+    <a class="btn btn-secondary" href="/document/@document.Id/update">Изменить</a>
+    <button class="btn btn-danger" @onclick="OnDelete">Удалить</button>
+}
 
 @code {
     [Parameter]
@@ -83,13 +84,16 @@
         {
             authedUser = authState.User.Adapt<AuthedUser>();
         }
-        if (authedUser.Role != Role.Admin && authedUser.Id != Id) httpContext.Response.Redirect("/");
 
-        document = documentService.GetById(Id);
-        if (document == null)
+        try 
         {
-            httpContext.Response.Redirect("/");
+            var doc = documentService.GetById(Id);
+            if (authedUser.Role != Role.Admin && authedUser.Id != doc.OwnerId) httpContext.Response.Redirect("/403");
+            document = doc;
+        } catch (NotFoundException e){
+            httpContext.Response.Redirect("/404");
         }
+
     }
 
     public void OnDelete()
@@ -97,10 +101,10 @@
         try
         {
             documentService.Delete(Id);
-            navigationManager.NavigateTo("/");
+            navigationManager.NavigateTo("/document");
         } catch (NotFoundException ex)
         {
-            navigationManager.NavigateTo("/");
+            navigationManager.NavigateTo("/404");
         } 
     }
 }   
