@@ -10,6 +10,7 @@ using ContractSystem.WebApp.Components.Models;
 using Mapster;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using SimpleBlazorMultiselect;
 using System.Security.Claims;
 
 namespace ContractSystem.WebApp
@@ -56,7 +57,7 @@ namespace ContractSystem.WebApp
             builder.Services.AddScoped<DocumentService>();
             builder.Services.AddScoped<ApprovalService>();
 
-
+            SimpleMultiselectGlobals.Standalone = true;
 
 
            var app = builder.Build();
