@@ -1,4 +1,4 @@
-﻿<div class="col">
+﻿<div class="col-4 mt-3">
     <div class="card ">
         <div class="card-body">
             <h5 class="card-title">@Document.Index</h5>
@@ -18,8 +18,8 @@
         <div class="card-footer">
             <div class="btn-group w-100" role="group" aria-label="Basic outlined">
                 <a href="/document/@Document.Id" type="button" class="btn btn-outline-dark">Подробнее</a>
-                <a href="/user/@Document.OwnerId" type="button" class="btn btn-outline-dark">Владелец</a>
-                <a href="" type="button" class="btn btn-outline-dark">Согласования</a>
+                <a href="/user/@Document.OwnerId" type="button" class="btn btn-outline-dark">Ответственный</a>
+                <a href="/document/@Document.Id/approval" type="button" class="btn btn-outline-dark">Согласования</a>
             </div>
         </div>
     </div>
