@@ -3,9 +3,11 @@
 
 <PageTitle>Все документы</PageTitle>
 
-<InputText @bind-Value="filterText"></InputText>
-<button @onclick="OnFilter">Фильтр</button>
-<a class="btn btn-outline-primary m-2 mb-3" href="/document/create">Добавить</a>
+<div class="input-group w-50">
+    <InputText @bind-Value="filterText" id="filterText" class="form-control"></InputText>
+    <button class="btn btn-outline-secondary" type="button" for="filterText" @onclick="OnFilter">Фильтр</button>
+    <a class="btn btn-outline-primary" href="/document/create">Добавить</a>
+</div>
 
 <div class="container m-4">
         <div class="row row-cols-1 row-cols-md-2 
