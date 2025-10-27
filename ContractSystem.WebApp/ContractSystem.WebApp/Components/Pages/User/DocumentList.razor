@@ -5,7 +5,7 @@
 
 <InputText @bind-Value="filterText"></InputText>
 <button @onclick="OnFilter">Фильтр</button>
-<button @onclick="ShowAddModal">Добавить</button>
+<a class="btn btn-outline-primary m-2 mb-3" href="/document/create">Добавить</a>
 
 <div class="row">
     @foreach (var doc in filtredDocuments)
@@ -18,28 +18,46 @@
     [CascadingParameter]
     HttpContext httpContext { get; set; }
     [Inject]
+    NavigationManager navigationManager { get; set; }
+    [Inject]
+    AuthenticationStateProvider authenticationStateProvider { get; set; }
+    [Inject]
     public DocumentService documentService { get; set; }
     [Inject]
     public UserService userService { get; set; }
     [Parameter]
     public int UserId { get; set; }
 
+    AuthedUser authedUser = null;
+
     List<DocumentOut> documents = new();
     List<DocumentOut> filtredDocuments = new();
     UserOut user = new();
 
     string filterText = "";
-    bool isModalShowed = false;
     public DocumentIn documentNew;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        authedUser = authState.User.Adapt<AuthedUser>();
+
+        if (authedUser.Role != Role.Admin && UserId != authedUser.Id)
+        {
+            if (httpContext != null)
+                httpContext.Response.Redirect("/403");
+            else
+                navigationManager.NavigateTo("/403");
+        }
         try
         {
             user = userService.getById(UserId);
         } catch (NotFoundException e)
         {
-            httpContext.Response.Redirect("/Error");
+            if (httpContext != null)
+                httpContext.Response.Redirect("/404");
+            else
+                navigationManager.NavigateTo("/404");
         }
         documents = documentService.GetAllDocumentsByUser(user.Id);
         OnFilter();
@@ -59,22 +77,5 @@
             .ToList();
 
         StateHasChanged();
-    }
-    protected void ShowAddModal()
-    {
-        documentNew = new();
-        isModalShowed = true;
-    }
-    protected void HideAddModal()
-    {
-        isModalShowed = false;
-    }
-    protected void SaveAddModal()
-    {
-        HideAddModal();
-        var doc = documentService.AddDocument(documentNew);
-        documents.Add(doc);
-
-        OnFilter();
     }
 }

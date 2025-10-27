@@ -17,37 +17,53 @@
         <InputTextArea class="form-control" @bind-Value="documentNew.Content" />
         <ValidationMessage For="@(() => documentNew.Content)" />
     </div>
-    <div class="mb-3">
-        <label class="form-label">Ответственный</label>
-        <InputSelect class="form-control" @bind-Value="documentNew.OwnerId">
-            <option value=""></option>
-            @foreach (var user in users)
-            {
-                <option value="@user.Id">@user.Name</option>
-            }
-        </InputSelect>
-        <ValidationMessage For="@(() => documentNew.OwnerId)" />
-    </div>
+    <AuthorizeView Roles="Admin" Context="AdminContext">
+        <div class="mb-3">
+            <label class="form-label">Ответственный</label>
+            <InputSelect class="form-control" @bind-Value="documentNew.OwnerId">
+                <option value=""></option>
+                @foreach (var user in users)
+                {
+                    <option value="@user.Id">@user.Name</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => documentNew.OwnerId)" />
+        </div>
+    </AuthorizeView>
     <a type="button" class="btn btn-secondary" href="/document">Отмена</a>
     <button type="submit" class="btn btn-primary">Добавить</button>
 </EditForm>
 
 @code {
+    [CascadingParameter]
+    HttpContext httpContext { get; set; }
     [Inject]
-    public NavigationManager navigationManager{ get; set; }
+    NavigationManager navigationManager { get; set; }
+    [Inject]
+    AuthenticationStateProvider authenticationStateProvider { get; set; }
+
     [Inject]
     public DocumentService documentService { get; set; }
     [Inject]
     public UserService userService { get; set; }
 
+    AuthedUser authedUser = null;
     List<UserOut> users = new();
 
     public DocumentIn documentNew;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity?.IsAuthenticated == true)
+        {
+            authedUser = authState.User.Adapt<AuthedUser>();
+        } 
+
         users = userService.getAll();
-        documentNew = new DocumentIn();
+        documentNew = new DocumentIn() { 
+            OwnerId = authedUser.Id
+        };
     }
 
     protected void SaveAddModal()
@@ -55,7 +71,10 @@
         try
         {
             var doc = documentService.AddDocument(documentNew);
-            navigationManager.NavigateTo("/document");
+            if (authedUser.Role == Role.Admin)
+                navigationManager.NavigateTo("/document");
+            else
+                navigationManager.NavigateTo($"user/{authedUser.Id}/document");
         } catch
         {
             
