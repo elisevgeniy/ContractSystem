@@ -1,5 +1,5 @@
 ﻿<div class="col-4 mt-3">
-    <div class="card ">
+    <div class="card border-2 @((Document.IsApproved) ? "border-success" : "border-warning")">
         <div class="card-body">
             <h5 class="card-title">@Document.Index</h5>
             <h6 class="card-subtitle mb-2 text-muted">
