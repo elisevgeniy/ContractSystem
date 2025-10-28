@@ -1,0 +1,31 @@
+﻿<div class="col-4 mt-3">
+    <div class="card border-2 @((Document.IsApproved) ? "border-success" : "border-warning")">
+        <div class="card-body">
+            <h5 class="card-title">@Document.Index</h5>
+            <h6 class="card-subtitle mb-2 text-muted">
+                @if (Document.IsApproved)
+                {
+                    @("Согласован")
+                    ;
+                }
+                else
+                {
+                    @("Не согласован")
+                }
+            </h6>
+            <p class="card-text">@Document.Content</p>
+        </div>
+        <div class="card-footer">
+            <div class="btn-group w-100" role="group" aria-label="Basic outlined">
+                <a href="/document/@Document.Id" type="button" class="btn btn-outline-dark">Подробнее</a>
+                <a href="/user/@Document.OwnerId" type="button" class="btn btn-outline-dark">Ответственный</a>
+                <a href="/document/@Document.Id/approval" type="button" class="btn btn-outline-dark">Согласования</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public DocumentOut Document { get; set; }
+}

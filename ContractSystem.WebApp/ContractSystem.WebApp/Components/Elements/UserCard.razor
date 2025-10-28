@@ -1,0 +1,20 @@
+﻿
+<div class="card" style="width: 18rem;">
+    <div class="card-body">
+        <h5 class="card-title">@User.Name</h5>
+        <h6 class="card-subtitle mb-2 text-muted">ID: @User.Id</h6>
+        <h6 class="card-subtitle mb-2 text-muted">Логин: @User.Login</h6>
+        <h6 class="card-subtitle mb-2 text-muted">Роль: @User.Role</h6>
+        <p class="card-text">Всего договоров: @User.Documents.Count<br /> Всего согласований: @User.Approvals.Count</p>
+        <a href="#" class="card-link">Согласования</a>
+        <a href="#" class="card-link">Договоры</a>
+    </div>
+    <div class="card-footer">
+        <a href="/user/@User.Id" class="card-link">Подробнее</a>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public UserOut User { get; set; }
+}

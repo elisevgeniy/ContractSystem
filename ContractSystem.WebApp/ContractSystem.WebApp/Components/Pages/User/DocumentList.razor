@@ -1,0 +1,83 @@
+﻿@page "/user/{UserId:int}/document"
+@rendermode InteractiveServer
+
+<PageTitle>Документы</PageTitle>
+
+<div class="input-group w-50">
+    <InputText @bind-Value="filterText" id="filterText" class="form-control"></InputText>
+    <button class="btn btn-outline-secondary" type="button" for="filterText" @onclick="OnFilter">Фильтр</button>
+    <a class="btn btn-outline-primary" href="/document/create">Добавить</a>
+</div>
+
+<div class="row">
+    @foreach (var doc in filtredDocuments)
+    {
+        <DocumentCard Document="doc"></DocumentCard>
+    }
+</div>
+
+@code {
+    [CascadingParameter]
+    HttpContext httpContext { get; set; }
+    [Inject]
+    NavigationManager navigationManager { get; set; }
+    [Inject]
+    AuthenticationStateProvider authenticationStateProvider { get; set; }
+    [Inject]
+    public DocumentService documentService { get; set; }
+    [Inject]
+    public UserService userService { get; set; }
+    [Parameter]
+    public int UserId { get; set; }
+
+    AuthedUser authedUser = null;
+
+    List<DocumentOut> documents = new();
+    List<DocumentOut> filtredDocuments = new();
+    UserOut user = new();
+
+    string filterText = "";
+    public DocumentIn documentNew;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        authedUser = authState.User.Adapt<AuthedUser>();
+
+        if (authedUser.Role != Role.Admin && UserId != authedUser.Id)
+        {
+            if (httpContext != null)
+                httpContext.Response.Redirect("/403");
+            else
+                navigationManager.NavigateTo("/403");
+        }
+        try
+        {
+            user = userService.getById(UserId);
+        } catch (NotFoundException e)
+        {
+            if (httpContext != null)
+                httpContext.Response.Redirect("/404");
+            else
+                navigationManager.NavigateTo("/404");
+        }
+        documents = documentService.GetAllDocumentsByUser(user.Id);
+        OnFilter();
+    }
+
+    protected void OnFilter()
+    {
+        var filterTextLow = filterText.ToLower();
+        filtredDocuments = documents
+            .Where(d =>
+                filterTextLow.Length == 0
+                ||
+                d.Index.ToLower().Contains(filterTextLow)
+                ||
+                d.Content.ToLower().Contains(filterTextLow)
+            )
+            .ToList();
+
+        StateHasChanged();
+    }
+}

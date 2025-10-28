@@ -10,10 +10,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem.Services", "
 		{5AC56427-5E96-4ADC-8AA3-75177C2AE342} = {5AC56427-5E96-4ADC-8AA3-75177C2AE342}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem._Debug", "ContractSystem.Debug\ContractSystem._Debug.csproj", "{CF33385F-96D7-4FC6-8DAB-F333D69D3908}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem.TelegramBot", "ContractSystem.TelegramBot\ContractSystem.TelegramBot.csproj", "{A03AA4B3-FDB5-406F-9804-DFA3346E38C0}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem.WebApp", "ContractSystem.WebApp\ContractSystem.WebApp\ContractSystem.WebApp.csproj", "{A0A54BC1-B6EE-47E2-81BE-30AD02954511}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem.WebApp.Client", "ContractSystem.WebApp\ContractSystem.WebApp.Client\ContractSystem.WebApp.Client.csproj", "{CB4FD529-8CBD-4D03-987C-1BD9B2C0410D}"
@@ -24,6 +20,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystem.Api", "ContractSystem.Api\ContractSystem.Api.csproj", "{A353FE9B-432A-49DD-91E0-5C07CE616B96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractSystemTests", "ContractSystemTests\ContractSystemTests.csproj", "{14D8DD8F-D4F2-4DA1-8C9B-2D5511AF0B8B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,14 +39,6 @@ Global
 		{B1B535DD-517D-4E89-A4E9-B5F64D61E825}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1B535DD-517D-4E89-A4E9-B5F64D61E825}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1B535DD-517D-4E89-A4E9-B5F64D61E825}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CF33385F-96D7-4FC6-8DAB-F333D69D3908}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CF33385F-96D7-4FC6-8DAB-F333D69D3908}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CF33385F-96D7-4FC6-8DAB-F333D69D3908}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CF33385F-96D7-4FC6-8DAB-F333D69D3908}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A03AA4B3-FDB5-406F-9804-DFA3346E38C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A03AA4B3-FDB5-406F-9804-DFA3346E38C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A03AA4B3-FDB5-406F-9804-DFA3346E38C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A03AA4B3-FDB5-406F-9804-DFA3346E38C0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A0A54BC1-B6EE-47E2-81BE-30AD02954511}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A0A54BC1-B6EE-47E2-81BE-30AD02954511}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0A54BC1-B6EE-47E2-81BE-30AD02954511}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -59,6 +51,14 @@ Global
 		{716365AA-80FC-4884-A90C-8E867468E36E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{716365AA-80FC-4884-A90C-8E867468E36E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{716365AA-80FC-4884-A90C-8E867468E36E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A353FE9B-432A-49DD-91E0-5C07CE616B96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A353FE9B-432A-49DD-91E0-5C07CE616B96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A353FE9B-432A-49DD-91E0-5C07CE616B96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A353FE9B-432A-49DD-91E0-5C07CE616B96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14D8DD8F-D4F2-4DA1-8C9B-2D5511AF0B8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14D8DD8F-D4F2-4DA1-8C9B-2D5511AF0B8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14D8DD8F-D4F2-4DA1-8C9B-2D5511AF0B8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14D8DD8F-D4F2-4DA1-8C9B-2D5511AF0B8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

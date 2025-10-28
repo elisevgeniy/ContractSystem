@@ -1,0 +1,18 @@
+﻿<a href="@($"/user/{authedUser.Id}")">@authedUser.Name</a>
+<a href="/logout">Выйти</a>
+
+@code {
+    [Inject]
+    AuthenticationStateProvider authenticationStateProvider { get; set; }
+
+    AuthedUser authedUser { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity?.IsAuthenticated == true)
+        {
+            authedUser = authState.User.Adapt<AuthedUser>();
+        }
+    }
+}

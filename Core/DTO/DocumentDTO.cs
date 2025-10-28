@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace ContractSystem.Core.DTO
 {
+    [Index(nameof(Index), Name = "IX_Index", IsUnique = true)]
     public class DocumentDTO
     {
         public int Id { get; set; }

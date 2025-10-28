@@ -11,9 +11,9 @@ namespace ContractSystem.Core.IRepositories
     {
         public List<UserDTO> GetAll();
 
-        public UserDTO? GetById(int id);
+        public UserDTO GetById(int id);
 
-        public UserDTO? GetFirstByFirstname(string firstname);
+        public UserDTO? GetByLogin(string login);
 
         public UserDTO Add(UserDTO userDTO);
 

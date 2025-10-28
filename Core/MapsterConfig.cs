@@ -21,11 +21,15 @@ namespace ContractSystem.Core
             config.NewConfig<UserIn, UserDTO>();
             config.NewConfig<UserDTO, UserSearch>();
             config.NewConfig<UserOut, UserSearch>();
+            config.NewConfig<UserIn, UserDTO>()
+                .Map(uDto => uDto.LoginData.Password, uIn => uIn.Password);
 
             config.NewConfig<DocumentDTO, DocumentOut>();
             config.NewConfig<DocumentIn, DocumentDTO>();
             config.NewConfig<DocumentDTO, DocumentSearch>();
             config.NewConfig<DocumentOut, DocumentSearch>();
+            config.NewConfig<DocumentOut, DocumentUpdateIn>()
+                .Map(dUpdIn => dUpdIn.ApprovalUsers, dOut => dOut.Approvals.Select(a => a.User).ToHashSet());
 
             config.NewConfig<ApprovalDTO, ApprovalOut>();
             config.NewConfig<ApprovalIn, ApprovalDTO>();

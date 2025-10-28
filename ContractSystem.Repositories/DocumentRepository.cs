@@ -22,20 +22,27 @@ namespace ContractSystem.Repositories
 
         public List<DocumentDTO> GetAll()
         {
-            return _dataContext.Documents.DefaultIfEmpty().ToList();
+            return _dataContext.Documents
+                                .Include(d => d.Owner)
+                                .Include(d => d.Approvals)
+                                .ToList();
         }
 
-        public List<DocumentDTO> GetAllByUser(UserDTO userDTO)
+        public List<DocumentDTO> GetAllByUser(int userId)
         {
             return _dataContext.Documents
                                 .Include(d => d.Owner)
-                                .Where(d => d.Owner.Id == userDTO.Id)
+                                .Where(d => d.Owner.Id == userId)
                                 .ToList();
         }
 
         public DocumentDTO? GetById(int id)
         {
-            return _dataContext.Documents.Find(id);
+            return _dataContext.Documents
+                                .Include(d => d.Owner)
+                                .Include(d => d.Approvals)
+                                .Where(d => d.Id == id)
+                                .Single();
         }
 
         public DocumentDTO Add(DocumentDTO documentDTO)

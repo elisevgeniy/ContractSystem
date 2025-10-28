@@ -11,7 +11,9 @@
     <ProjectReference Include="..\..\ContractSystem.Service\ContractSystem.Services.csproj" />
     <ProjectReference Include="..\..\Core\ContractSystem.Core.csproj" />
     <ProjectReference Include="..\ContractSystem.WebApp.Client\ContractSystem.WebApp.Client.csproj" />
+    <PackageReference Include="Blazored.Toast" Version="4.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.20" />
+    <PackageReference Include="SimpleBlazorMultiselect" Version="0.3.0" />
   </ItemGroup>
 
 </Project>

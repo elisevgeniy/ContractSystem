@@ -1,0 +1,112 @@
+﻿@page "/login"
+@using System.Security.Claims
+@using ContractSystem.Core.Exceptions
+
+
+<div class="row justify-content-center min-vh-100">
+    <div class="col-md-6 col-lg-4">
+        <h1 class="mb-3 fw-normal text-center">Авторизация</h1>
+        <EditForm Model="loginIn" OnValidSubmit="StartLogin" FormName="Login">
+            <DataAnnotationsValidator />
+
+            <!-- Email input -->
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="loginIn.Login" id="loginInput" class="form-control" placeholder></InputText>
+                <label for="loginInput">Логин</label>
+                <ValidationMessage For="@(() => loginIn.Login)" />
+            </div>
+
+            <!-- Password input -->
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="loginIn.Password" type="password" id="passwordInput" class="form-control" placeholder></InputText>
+                <label class="form-label" for="passwordInput">Пароль</label>
+                <ValidationMessage For="@(() => loginIn.Password)" />
+            </div>
+            <!-- Section: Design Block -->
+
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Войти</button>
+
+            @if (loginFail)
+            {
+                <div class="alert alert-danger mt-3" role="alert">
+                    Логин или пароль не верный!
+                </div>
+            }
+
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter]
+    public HttpContext httpContext { get; set; }
+
+    [SupplyParameterFromForm]
+    public LoginIn loginIn { get; set; } = new LoginIn();
+
+    [SupplyParameterFromQuery]
+    public string ReturnUrl { get; set; } = "/";
+
+    [Inject]
+    public UserService userService { get; set; }
+
+    private bool loginFail = false;
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            if (userService.getByLogin("admin") == null)
+            {
+                userService.AddUser(new Core.Models.In.UserIn()
+                    {
+                        Login = "admin",
+                        Name = "admin",
+                        Password = "admin",
+                        Role = Core.Models.Role.Admin
+                    });
+            }
+        }
+        catch { }
+    }
+
+    public async void StartLogin()
+    {
+        //Идем в базу проверяться и тд
+        if (validateLogin(loginIn))
+        {
+            loginFail = false;
+            var user = userService.getByLogin(loginIn.Login);
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Sid, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Name.ToString()),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
+            };
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var pr = new ClaimsPrincipal(identity);
+
+            await httpContext.SignInAsync(pr);
+            httpContext.Response.Redirect(ReturnUrl);
+        } else
+        {
+            loginFail = true;
+        }
+    }
+
+    private bool validateLogin(LoginIn loginModel)
+    {
+        try
+        {
+            return userService.Auth(new LoginIn()
+            {
+                Login = loginModel.Login,
+                Password = loginModel.Password
+            });
+        } catch(NotFoundException e)
+        {
+            return false;
+        }
+    }
+}

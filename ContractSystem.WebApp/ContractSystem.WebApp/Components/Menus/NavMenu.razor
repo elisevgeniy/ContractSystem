@@ -1,0 +1,67 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">ContractSystem.WebApp</a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+        <AuthorizeView Roles="Admin">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/user">
+                    Пользователи
+                </NavLink>
+            </div>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/document">
+                    Документы
+                </NavLink>
+            </div>
+        </AuthorizeView>
+        
+        <AuthorizeView Roles="User">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="@($"/user/{authedUser.Id}")">
+                    Профиль
+                </NavLink>
+            </div>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="@($"/user/{authedUser.Id}/document")">
+                    Мои документы
+                </NavLink>
+            </div>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="@($"/user/{authedUser.Id}/approval")">
+                    Запросы на согласование
+                </NavLink>
+            </div>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/document">
+                    Все документы
+                </NavLink>
+            </div>
+        </AuthorizeView>
+    </nav>
+</div>
+
+@code {
+    [Inject]
+    AuthenticationStateProvider authenticationStateProvider { get; set; }
+
+    AuthedUser authedUser { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity?.IsAuthenticated == true)
+        {
+            authedUser = authState.User.Adapt<AuthedUser>();
+        }
+    }
+}

@@ -1,0 +1,74 @@
+﻿@page "/user/create"
+@attribute [Authorize];
+@rendermode InteractiveServer
+
+<PageTitle>Добавление пользователя</PageTitle>
+
+<EditForm Model="userNew" OnValidSubmit="Save">
+    <DataAnnotationsValidator />
+    <h2>Добавление пользователя</h2>
+    <div class="mb-3">
+        <label class="form-label">Логин</label>
+        <InputText class="form-control" @bind-Value="userNew.Login" />
+        <ValidationMessage For="@(() => userNew.Login)" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Имя</label>
+        <InputTextArea class="form-control" @bind-Value="userNew.Name" />
+        <ValidationMessage For="@(() => userNew.Name)" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Пароль</label>
+        <InputText type="password" class="form-control" @bind-Value="userNew.Password" />
+        <ValidationMessage For="@(() => userNew.Password)" />
+    </div>
+    <a type="button" class="btn btn-secondary" href="/document">Отмена</a>
+    <button type="submit" class="btn btn-primary">Добавить</button>
+
+    @if (showError)
+    {
+        <div class="alert alert-danger mt-3" role="alert">
+            @errorText
+        </div>
+    }
+</EditForm>
+
+@code {
+    [Inject]
+    AuthenticationStateProvider authenticationStateProvider { get; set; }
+    [Inject]
+    public NavigationManager navigationManager{ get; set; }
+    [Inject]
+    public UserService userService { get; set; }
+
+    AuthedUser authedUser;
+    bool showError = false;
+    string errorText = "";
+    public UserIn userNew;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity?.IsAuthenticated == true)
+        {
+            authedUser = authState.User.Adapt<AuthedUser>();
+        }
+        if (authedUser.Role != Role.Admin) navigationManager.NavigateTo("/403");
+
+        userNew = new();
+
+    }
+
+    protected void Save()
+    {
+        try
+        {
+            userService.AddUser(userNew);
+            navigationManager.NavigateTo("/user");
+        } catch (Exception e)
+        {
+            showError = true;
+            errorText = e.Message;
+        }
+    }
+}
