@@ -54,16 +54,20 @@
 
     protected override void OnInitialized()
     {
-        if (userService.getByLogin("admin") == null)
+        try
         {
-            userService.AddUser(new Core.Models.In.UserIn()
+            if (userService.getByLogin("admin") == null)
             {
-                Login = "admin",
-                Name = "admin",
-                Password = "admin",
-                Role = Core.Models.Role.Admin
-            });
+                userService.AddUser(new Core.Models.In.UserIn()
+                    {
+                        Login = "admin",
+                        Name = "admin",
+                        Password = "admin",
+                        Role = Core.Models.Role.Admin
+                    });
+            }
         }
+        catch { }
     }
 
     public async void StartLogin()

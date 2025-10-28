@@ -34,7 +34,7 @@ namespace ContractSystem.Repositories
 
         public UserDTO? GetByLogin(string login)
         {
-            return _dataContext.Users.Include(u => u.LoginData).Where(u => u.Login == login).SingleOrDefault(); ;
+            return _dataContext.Users.Include(u => u.LoginData).Where(u => u.Login == login).Single(); ;
         }
 
         public UserDTO Add(UserDTO userDTO)

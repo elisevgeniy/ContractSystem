@@ -35,9 +35,16 @@ namespace ContractSystem.Service
 
         public UserOut getByLogin(string login)
         {
-            var userDTO = _userRepository.GetByLogin(login);
-            var result = userDTO.Adapt<UserOut>();
-            return result;
+            try
+            {
+                var userDTO = _userRepository.GetByLogin(login);
+                var result = userDTO.Adapt<UserOut>();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new NotFoundException("Пользователь не найден", ex);
+            }
         }
 
         public List<UserOut> getAll()
@@ -81,9 +88,15 @@ namespace ContractSystem.Service
 
         public bool Auth(LoginIn loginIn)
         {
-            UserDTO? userDTO = _userRepository.GetByLogin(loginIn.Login);
-            if (userDTO == null) throw new NotFoundException();
-            return userDTO.LoginData.Password.Equals(loginIn.Password);
+            try
+            {
+                UserDTO userDTO = _userRepository.GetByLogin(loginIn.Login);
+                return userDTO.LoginData.Password.Equals(loginIn.Password);
+            }
+            catch (Exception ex)
+            {
+                throw new NotFoundException("Пользователь не найден", ex);
+            }
         }
 
         public UserOut Update(UserUpdateIn userIn)
@@ -98,18 +111,19 @@ namespace ContractSystem.Service
                 if (!userDTO.LoginData.Password.Equals(userIn.OldPassword))
                     throw new Exception("Старый пароль не правильный");
                 userDTO.LoginData.Password = userIn.Password;
-            } else if (userIn.Password != null)
+            }
+            else if (userIn.Password != null)
             {
                 throw new Exception("Старый пароль не указан");
             }
-                userDTO = _userRepository.Update(userDTO);
+            userDTO = _userRepository.Update(userDTO);
             return userDTO.Adapt<UserOut>();
 
         }
 
-        public void Delete(int documentId)
+        public void Delete(int userId)
         {
-            var docDTO = _userRepository.GetById(documentId);
+            var docDTO = _userRepository.GetById(userId);
             _userRepository.Delete(docDTO);
         }
 
