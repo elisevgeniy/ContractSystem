@@ -1,8 +1,9 @@
+using ContractSystem.Core.Exceptions;
 using ContractSystem.Core.Models.In;
 using ContractSystem.Core.Models.Out;
 using ContractSystem.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ContractSystem.Core.Exceptions;
 
 namespace ContractSystem.Api.Controllers
 {
@@ -48,6 +49,33 @@ namespace ContractSystem.Api.Controllers
             }
         }
 
+        [HttpPatch]
+        [Authorize(Roles = "Admin")]
+        public ActionResult<DocumentOut> Update(DocumentUpdateIn document)
+        {
+            try
+            {
+                return Ok(documentService.Update(document));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
+        [HttpDelete]
+        [Authorize(Roles = "Admin")]
+        public ActionResult Delete(int documentId)
+        {
+            try
+            {
+                documentService.Delete(documentId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
