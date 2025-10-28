@@ -89,7 +89,9 @@ namespace ContractSystem.Service
                     });
                 }
             }
-            
+
+            if (docDTO.Approvals.Count == 0) docDTO.IsApproved = false;
+
             docDTO = _documentRepository.Update(docDTO);
             return docDTO.Adapt<DocumentOut>();
         }

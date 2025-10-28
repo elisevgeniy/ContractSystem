@@ -44,19 +44,20 @@ namespace ContractSystem.Service
         {
             return _approvalRepository.GetAllByDocument(documentId).Adapt<List<ApprovalOut>>();
         }
-        public void Approve(ApprovalIn approvalIn)
-        {
-            ApprovalDTO approvalDTO = _approvalRepository.GetAllByUser(approvalIn.UserId).Where(a => a.DocumentId == approvalIn.DocumentId).FirstOrDefault();
-            approvalDTO.IsApproved = approvalIn.IsApproved;
-            _approvalRepository.Update(approvalDTO);
-        }
         public ApprovalOut Approve(int approvalId)
         {
             ApprovalDTO? approvalDTO = _approvalRepository.GetById(approvalId);
             if (approvalDTO == null) throw new Exception("Согласование не найдено");
             approvalDTO.IsApproved = true;
             approvalDTO.ApprovalDate = DateTime.UtcNow;
-            return _approvalRepository.Update(approvalDTO).Adapt<ApprovalOut>();
+
+            if (approvalDTO.Document.Approvals.Count > 0)
+            {
+                approvalDTO.Document.IsApproved = !approvalDTO.Document.Approvals.Exists(a => a.IsApproved == false);
+            }
+
+            approvalDTO = _approvalRepository.Update(approvalDTO);
+            return approvalDTO.Adapt<ApprovalOut>();
         }
     }
 }
